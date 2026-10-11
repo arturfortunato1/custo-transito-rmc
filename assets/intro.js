@@ -1,4 +1,4 @@
-/* Abertura em tela cheia: um clipe curto (4 s, gerado por IA a pedido do Jose) toca uma vez e o site "abre" para o conteúdo.
+/* Abertura em tela cheia: um clipe curto (2 s, gerado por IA, versão "New trimmed" do Jose) toca uma vez e o site "abre" para o conteúdo.
    Arquivos: assets/intro.{mp4,webm,jpg} (horizontal) e assets/intro-portrait.{mp4,webm,jpg} (celular em pé).
    Para desligar: ENABLED = false. Para ver de novo mesmo já visto nesta visita: index.html?intro=1.
    Vai direto ao conteúdo quando: reduzir movimento, economia de dados, conexão lenta, já viu nesta visita,
