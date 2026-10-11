@@ -591,3 +591,16 @@ main>section:last-child{padding-bottom:var(--sp)}
 @media print{main>section{padding-block:10px 0!important}}
 .dx{min-width:0}.dx-btn{overflow-wrap:anywhere}
 @media (min-width:1101px){.cid-head,.cr{grid-template-columns:72px minmax(0,1fr) 104px 104px 104px 32px;column-gap:12px}.cr .step{grid-template-columns:32px minmax(0,1fr) 32px}.cr .step button{min-width:32px}}
+
+/* Abertura em tela cheia (ligada por assets/intro.js) */
+html.intro-on body{overflow:hidden}
+html.intro-on body::before{content:"";position:fixed;inset:0;background:#000;z-index:900}
+#intro{position:fixed;inset:0;z-index:1000;background:#000;opacity:1;transition:opacity .8s ease,transform .8s ease}
+#intro video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+#intro.out{opacity:0;transform:scale(1.04);pointer-events:none}
+.intro-skip{position:absolute;right:max(16px,env(safe-area-inset-right,0px));bottom:max(16px,env(safe-area-inset-bottom,0px));min-height:44px;min-width:76px;padding:0 20px;border-radius:999px;border:1px solid rgba(255,255,255,.4);background:rgba(0,0,0,.45);color:#fff;font:600 14px var(--text);cursor:pointer;-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
+html.intro-open main>.hero .wrap>*{animation:rise .9s cubic-bezier(.2,.7,.1,1) both}
+html.intro-open main>.hero .wrap>*:nth-child(2){animation-delay:.15s}
+html.intro-open main>.hero .wrap>*:nth-child(n+3){animation-delay:.3s}
+@media (prefers-reduced-motion:reduce){#intro{transition:none}}
+@media print{#intro{display:none!important}}
