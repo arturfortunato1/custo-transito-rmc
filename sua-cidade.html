@@ -9,6 +9,11 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400..900&family=Hanken+Grotesk:wght@400..700&family=Overpass+Mono:wght@600&display=swap">
 <link rel="stylesheet" href="assets/style.css">
 <link rel="icon" href="assets/fnp.png">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Custo do Trânsito RMC">
+<meta property="og:description" content="Para cada R$ 1 que o SUS pagou por internações de trânsito, a conta real foi de pelo menos R$ 27. Campinas e os 20 municípios da região.">
+<meta property="og:image" content="assets/fnp.png">
+<meta name="theme-color" content="#0d0f13">
 
 </head>
 <body data-page="sua-cidade">
@@ -36,7 +41,7 @@
           <select id="fCen"><option value="conservador">Conservadora (IPEA/ANTP)</option><option value="medio">Média (IPEA/ANTP)</option></select>
           <span class="hint">Se tiver o custo apurado do hospital, ele vale mais.</span></label></details>
       </div>
-      <div style="min-width:0;display:grid;gap:40px">
+      <div style="min-width:0;display:grid;gap:40px;grid-template-columns:minmax(0,1fr)" id="resultado">
         <div>
           <p class="eyebrow" id="rNome"></p>
           <p class="display" style="font-size:clamp(34px,4.6vw,60px);margin-top:12px;max-width:16ch" id="rHead"></p>
@@ -74,7 +79,7 @@ function fill(slug){
   const v=c?{nome:c.nome,pop:c.pop,ob:c.obitos,int:c.internacoes,val:Math.round(c.valorAih),dias:c.diasInternacao}:{nome:'',pop:'',ob:'',int:'',val:'',dias:''};
   $('fNome').value=v.nome;$('fPop').value=v.pop;$('fObitos').value=v.ob;$('fInt').value=v.int;$('fValor').value=v.val;$('fDias').value=v.dias;$('fUti').value='';
 }
-let upd=null;
+let upd=null; const sbar=UI.stickybar('resultado');
 function terr(){
   M.setCenario($('fCen').value);
   const pop=num('fPop')||1;
@@ -83,9 +88,9 @@ function terr(){
 function render(){
   const t=terr();
   $('rNome').textContent=t.nome;
-  if(!t.internacoes){ $('rHead').textContent='Informe as internações.'; $('rFigs').innerHTML=''; $('rBar').innerHTML=''; return; }
+  if(!t.internacoes){ $('rHead').textContent='Informe as internações.'; $('rFigs').innerHTML=''; $('rBar').innerHTML=''; sbar(''); return; }
   $('rHead').innerHTML=`${F.money(t.pago)} pagos pelo SUS. Custo de ao menos ${F.money(t.real)}.`;
-  $('rBar').innerHTML=UI.gapbar(t.pago,t.real);
+  $('rBar').innerHTML=UI.unitchart(t.pago,t.real);
   $('rPago').textContent=F.money(t.pago); $('rGap').textContent=F.money(t.gap);
   $('rSrc').innerHTML=(t.pagoInformado?'<span class="src ok">valor informado por você</span>':'<span class="src est">média da RMC aplicada ao valor pago</span>')+'<span class="src est">IPEA/ANTP, '+F.brl(t.custoInt)+' por internado, piso</span>';
   const c=M.contaCompleta(t,false);
@@ -93,6 +98,7 @@ function render(){
     <div class="fig"><span class="v n">${F.lt(t.leitosAno)}</span><span class="k">${t.leitosAno<1.5?'leito ocupado':'leitos ocupados'} o ano todo</span></div>
     <div class="fig"><span class="v n">${F.x0(t.fator)}</span><span class="k">custo sobre o valor pago</span></div>
     <div class="fig"><span class="v n">${F.money(c.total)}</span><span class="k">custo para a sociedade, piso</span></div>`;
+  sbar(`<span>SUS <b>${F.money(t.pago)}</b></span><span>estimado <b>${F.money(t.real)}</b></span><span><b>${F.lt(t.leitosAno)}</b> ${t.leitosAno<1.5?'leito':'leitos'}</span>`);
   if(upd) upd();
 }
 fill('campinas'); $('pre').value='campinas';

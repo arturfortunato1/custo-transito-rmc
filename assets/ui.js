@@ -4,13 +4,12 @@ const D = window.RMC, M = window.M, F = M.fmt;
 const esc = t => String(t).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const PAGES = [
   ['index.html','Início','inicio'],
-  ['sua-cidade.html','Calcule a sua cidade','sua-cidade'],
-  ['municipios.html','Municípios','municipios'],
-  ['municipio.html','Fichas','municipio'],
-  ['calculadora.html','Por CID-10','calculadora'],
-  ['quem-paga.html','Quem paga','quem-paga'],
-  ['metodo.html','Método e fontes','metodo']
+  ['municipio.html','Sua cidade','municipio'],
+  ['calculadora.html','Calculadora','calculadora'],
+  ['metodo.html','Método','metodo']
 ];
+const FOOT = [['index.html','Início'],['municipio.html','Ficha da cidade'],['municipios.html','Municípios'],['sua-cidade.html','Calcule a sua cidade'],['calculadora.html','Por CID-10'],['quem-paga.html','Quem paga'],['metodo.html','Método e fontes']];
+const ALIAS = {'municipios':'municipio','sua-cidade':'municipio','quem-paga':'municipio'};
 const page = (document.querySelector('[data-page]')||{dataset:{}}).dataset.page;
 const inFrame = (()=>{try{return window.self!==window.top}catch(e){return true}})();
 
@@ -21,7 +20,7 @@ function bannerText(){
 const nav = document.getElementById('nav');
 if(nav) nav.outerHTML = `<header class="nav"><div class="wrap">
   <a class="brand" href="index.html"><i aria-hidden="true"></i>Custo do Trânsito <span>RMC</span></a>
-  <nav class="links" aria-label="Páginas">${PAGES.map(([h,l,id])=>`<a href="${h}"${id===page?' aria-current="page"':''}>${l}</a>`).join('')}</nav>
+  <nav class="links" aria-label="Páginas">${PAGES.map(([h,l,id])=>`<a href="${h}"${id===(ALIAS[page]||page)?' aria-current="page"':''}>${l}</a>`).join('')}</nav>
 </div></header>
 <div class="print-only wrap"><span class="logo-plate"><img src="assets/fnp.png" alt="FNP" width="187" height="69"></span><span>Custo do Trânsito RMC · Frente Nacional de Prefeitas e Prefeitos · ${new Date().toLocaleDateString('pt-BR')}</span></div>`;
 
@@ -29,7 +28,7 @@ const foot = document.getElementById('footer');
 if(foot) foot.outerHTML = `<footer class="site"><div class="wrap">
   <span class="logo-plate"><img src="assets/fnp.png" alt="Frente Nacional de Prefeitas e Prefeitos (FNP)" width="187" height="69"></span>
   <div>
-    <nav aria-label="Rodapé">${PAGES.map(([h,l])=>`<a href="${h}">${l}</a>`).join('')}</nav>
+    <nav aria-label="Rodapé">${FOOT.map(([h,l])=>`<a href="${h}">${l}</a>`).join('')}</nav>
     <p>Uma iniciativa da FNP e da Coalizão de Cidades pela Redução de Mortes e Lesões no Trânsito. Fontes: DATASUS, IBGE, SIOPS, IPEA/ANTP.</p>
     <p class="keyline"><span class="src ok">dado oficial</span> dado oficial <span class="src est">estimativa</span> estimativa</p>
   </div>
@@ -61,9 +60,9 @@ function tilemap(el, o){
   const neutral = !!o.neutral;
   const key = neutral ? 'pop' : o.key, fmtv = neutral ? (v=>F.int(v)) : o.fmtv;
   const vals = M.cidades.map(c=>c[key]);
-  const lo = Math.min(...vals), hi = Math.max(...vals);
+  const sorted = [...vals].sort((a,b)=>a-b), n = sorted.length;
   el.innerHTML = M.cidades.map(c=>{
-    const p = hi>lo ? (c[key]-lo)/(hi-lo) : .5, pp = .08 + p*.92;
+    const q = sorted.indexOf(c[key])/(n-1), p = Math.min(4,Math.floor(q*5))/4, pp = .08 + p*.92;
     return `<a class="tile${neutral?' neutral':''}${!neutral&&pp>.62?' hot':''}${c.slug===o.current?' on':''}" style="grid-column:${c.tile[0]+1};grid-row:${c.tile[1]+1};--p:${pp.toFixed(3)}"
       href="${o.href?o.href(c):'municipio.html#'+c.slug}" title="${esc(c.nome)}: ${fmtv(c[key])}${neutral?' habitantes':''}" aria-label="${esc(c.nome)}">
       <b>${esc(SHORT[c.slug]||c.nome)}</b><small>${fmtv(c[key])}</small></a>`;
@@ -74,6 +73,21 @@ function tilemap(el, o){
 function gapbar(tab, real, cls){
   const s = real ? tab/real*100 : 0;
   return `<div class="gapbar ${cls||''}" role="img" aria-label="Tabela SUS ${F.money(tab)} de um custo real de ${F.money(real)}"><span class="s" style="flex-basis:${s}%"></span><span class="g"></span></div>`;
+}
+
+/* Gráfico de unidades: 1 quadrado azul pago, o resto tracejado de custo. */
+function unitchart(tab, real){
+  const k = tab>0 ? Math.max(2,Math.min(80,Math.round(real/tab))) : 2;
+  return `<div class="units" role="img" aria-label="Para cada R$ 1 pago pelo SUS, a conta estimada é de R$ ${k}"><i class="p"></i>${'<i></i>'.repeat(k-1)}</div>
+  <div class="units-cap"><span class="p"><b>R$ 1</b> pago pela tabela</span><span><b>R$ ${k}</b> de custo estimado</span></div>`;
+}
+
+/* Barra fixa no celular: resumo do resultado, que leva ao resultado completo ao tocar. */
+function stickybar(targetId){
+  const a=document.createElement('a'); a.className='sbar'; a.href='#'+targetId; document.body.appendChild(a); document.body.classList.add('has-sbar');
+  const t=document.getElementById(targetId);
+  if('IntersectionObserver' in window&&t){ new IntersectionObserver(e=>a.classList.toggle('on',!e[0].isIntersecting),{threshold:.15}).observe(t); } else a.classList.add('on');
+  return html=>{a.innerHTML=html};
 }
 
 /* Barra de tipos de vítima (CID-10 V01–V89). grupos: lista de {nome,cid,cor,n,share}. */
@@ -117,5 +131,5 @@ function countUp(el, to, render, dur){
     el.textContent = render(1+(to-1)*e); if(p<1) requestAnimationFrame(tick); else el.textContent = render(to); })(t0);
 }
 
-window.UI = {esc, tilemap, gapbar, countUp, reduce, SHORT, src, ORG, vitimas, prevencao, inFrame};
+window.UI = {unitchart, stickybar, esc, tilemap, gapbar, countUp, reduce, SHORT, src, ORG, vitimas, prevencao, inFrame};
 })();

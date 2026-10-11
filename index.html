@@ -10,6 +10,11 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400..900&family=Hanken+Grotesk:wght@400..700&family=Overpass+Mono:wght@600&display=swap">
 <link rel="stylesheet" href="assets/style.css">
 <link rel="icon" href="assets/fnp.png">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Custo do Trânsito RMC">
+<meta property="og:description" content="Para cada R$ 1 que o SUS pagou por internações de trânsito, a conta real foi de pelo menos R$ 27. Campinas e os 20 municípios da região.">
+<meta property="og:image" content="assets/fnp.png">
+<meta name="theme-color" content="#0d0f13">
 
 </head>
 <body data-page="inicio">
@@ -17,23 +22,16 @@
 
 <main>
   <section class="hero"><div class="wrap">
-    <div id="org"></div>
-    <p class="eyebrow" style="margin-top:28px">Região Metropolitana de Campinas · 20 municípios · <span id="ano"></span></p>
-    <h1 class="display" style="margin-top:22px;max-width:14ch">O SUS pagou <span class="mark-sus n" id="hPago">R$&nbsp;4,9&nbsp;mi</span> por <span class="n" id="hInt">2.631</span> internações de trânsito. A conta real é de pelo menos <span class="mark-gap"><b class="n" id="hEst">R$&nbsp;134&nbsp;mi</b></span>.</h1>
-
-    <div style="margin-top:48px">
-      <div id="heroBar"></div>
-      <div class="gap-legend">
-        <div class="s"><span class="k"><i class="key" style="--c:var(--sus)"></i>Tabela SUS <span class="src ok">SIH/SUS 2025, valor oficial</span></span><span class="v n" id="hTab"></span></div>
-        <div></div>
-        <div class="r"><span class="k"><i class="key h"></i>Além da tabela <span class="src est">IPEA/ANTP corrigido pelo IPCA, margem de ±50%</span></span><span class="v n" id="hGap"></span></div>
-      </div>
-      <p class="small" style="margin-top:14px">A tabela paga o procedimento; o custo por internado vem do IPEA. Piso. <a href="metodo.html#estimativa">Como calculamos</a></p>
+    <p class="eyebrow">Frente Nacional de Prefeitas e Prefeitos · RMC, <span id="ano"></span></p>
+    <h1 class="display" style="margin-top:18px;max-width:20ch">Para cada R$&nbsp;1 que o SUS pagou, a conta real foi de ao menos <span class="mark-gap"><b class="n" id="hX">R$&nbsp;27</b></span>.</h1>
+    <div style="margin-top:32px" id="heroUnits"></div>
+    <div class="gap-legend" style="margin-top:28px">
+      <div class="s"><span class="k"><i class="key" style="--c:var(--sus)"></i>Tabela SUS <span class="src ok">SIH/SUS 2025, valor oficial</span></span><span class="v n" id="hTab"></span></div>
+      <div></div>
+      <div class="r"><span class="k"><i class="key h"></i>Estimado <span class="src est">IPEA/ANTP corrigido pelo IPCA, margem de ±50%</span></span><span class="v n" id="hGap"></span></div>
     </div>
-  </div></section>
-
-  <section class="sec-tight"><div class="wrap">
-    <div class="figs" id="figs"></div>
+    <p class="kpis" id="kpis"></p>
+    <div class="actions" style="margin-top:28px"><a class="btn" href="municipio.html#campinas">Calcule a sua cidade</a><a class="btn ghost" href="metodo.html#estimativa">Como calculamos</a></div>
   </div></section>
 
   <section class="sec"><div class="wrap">
@@ -73,6 +71,7 @@
       <a class="door" href="quem-paga.html"><h3 class="h3">Quem paga</h3><span class="go">Ver</span></a>
     </div>
     <p class="small" style="margin-top:32px">Dados oficiais DATASUS, IBGE e SIOPS. <a href="metodo.html">Método aberto.</a></p>
+    <p class="fine">Diárias de UTI: não estão nas bases públicas. Informe as do seu hospital na <a href="calculadora.html">calculadora</a>.</p>
   </div></section>
 </main>
 
@@ -84,20 +83,13 @@
 <script>
 (function(){
 const D=RMC, R=M.regiao, F=M.fmt, esc=UI.esc;
-document.getElementById('org').innerHTML=UI.ORG;
 document.getElementById('ano').textContent=D.ano;
-document.getElementById('hPago').textContent=F.money(R.pago);
-document.getElementById('hInt').textContent=F.int(R.internacoes);
-document.getElementById('hEst').textContent=F.money(R.real);
-document.getElementById('heroBar').innerHTML=UI.gapbar(R.pago,R.real,'anim');
+document.getElementById('hX').textContent='R$\u00a0'+Math.round(R.real/R.pago);
+document.getElementById('heroUnits').innerHTML=UI.unitchart(R.pago,R.real);
 document.getElementById('hTab').textContent=F.money(R.pago);
 document.getElementById('hGap').textContent=F.money(R.gap);
 const propria=R.despPropria/R.despSaude;
-document.getElementById('figs').innerHTML=`
-  <div class="fig"><span class="v n">${F.int(R.leitosAno)}</span><span class="k">leitos ocupados o ano todo</span>${UI.src('dias')}</div>
-  <div class="fig"><span class="v n">${F.int(R.internacoes)}</span><span class="k">internações</span>${UI.src('internacoes')}</div>
-  <div class="fig death"><span class="v n">${F.int(R.obitos)}</span><span class="k">mortes</span>${UI.src('obitos')}</div>
-  <div class="fig"><span class="v n">${F.pct(propria)}</span><span class="k">da saúde paga pela prefeitura</span>${UI.src('siops')}</div>`;
+document.getElementById('kpis').innerHTML=`<span><b class="n">${F.int(R.internacoes)}</b> internações</span><span><b class="n">${F.int(R.obitos)}</b> mortes</span><span><b class="n">${F.int(R.leitosAno)}</b> leitos o ano todo</span><span><b class="n">${F.pct(propria)}</b> da saúde paga pela prefeitura</span>`;
 UI.vitimas(document.getElementById('vit'),R.vitimas,null,true);
 const mo=D.vitimasRMC.find(v=>v.id==='moto');
 document.getElementById('quote').textContent=`${F.pct(mo.share)} das internações são de motociclistas.`;

@@ -41,7 +41,7 @@
         </details>
       </div>
 
-      <aside class="side">
+      <aside class="side" id="resultado">
         <div class="result" aria-live="polite">
                     <div class="vs">
             <div><span class="k">Tabela SUS</span><span class="v n" id="vSus"></span></div>
@@ -120,6 +120,7 @@ function renderLines(R){
   foot.innerHTML=`<span><b class="n">${INT(R.n)}</b> internados</span><span><b class="n">${INT(R.o)}</b> ${R.o===1?'óbito':'óbitos'}</span><span><b class="n" style="color:var(--sus)">${money(R.tab)}</b> na tabela</span><span><b class="n">${money(R.real)}</b> estimado</span>`;
 }
 
+const sbar=UI.stickybar('resultado');
 function calc(){
   const uti=val('pUti'), scen=document.getElementById('cenario').value;
   const R={rows:[],tab:0,real:0,n:0,o:0,leitosDia:0,utiDias:0,B:0}, porTipo={};
@@ -134,6 +135,7 @@ function calc(){
     porTipo[l.tipo]=(porTipo[l.tipo]||0)+l.n;
   });
   renderLines(R);
+  sbar(`<span>SUS <b>${money(R.tab)}</b></span><span>estimado <b>${money(R.real)}</b></span><span><b>${INT(R.leitosDia)}</b> leitos-dia</span>`);
   document.getElementById('vSus').textContent=money(R.tab);
   document.getElementById('vReal').textContent=money(R.real);
   document.getElementById('cmp').innerHTML=UI.gapbar(R.tab,R.real,'sm');

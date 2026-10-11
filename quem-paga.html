@@ -9,6 +9,11 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400..900&family=Hanken+Grotesk:wght@400..700&family=Overpass+Mono:wght@600&display=swap">
 <link rel="stylesheet" href="assets/style.css">
 <link rel="icon" href="assets/fnp.png">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Custo do Trânsito RMC">
+<meta property="og:description" content="Para cada R$ 1 que o SUS pagou por internações de trânsito, a conta real foi de pelo menos R$ 27. Campinas e os 20 municípios da região.">
+<meta property="og:image" content="assets/fnp.png">
+<meta name="theme-color" content="#0d0f13">
 
 </head>
 <body data-page="quem-paga">
@@ -33,7 +38,7 @@
       </div>
       <div style="text-align:right">
         <p class="eyebrow" id="tLabel">Para a sociedade, piso</p>
-        <p class="v n" id="total"></p>
+        <p class="v n" id="total" style="font-size:clamp(24px,3vw,36px)"></p>
         <p class="small" id="tSub" style="margin-top:10px"></p>
       </div>
     </div>
@@ -54,7 +59,7 @@ const F=M.fmt, esc=UI.esc;
 const terr=document.getElementById('terr'), inss=document.getElementById('inss');
 const alpha=[...M.cidades].sort((a,b)=>a.nome.localeCompare(b.nome,'pt-BR'));
 terr.innerHTML=`<option value="rmc">Região inteira, 20 municípios</option>`+alpha.map(c=>`<option value="${c.slug}">${esc(c.nome)}</option>`).join('');
-const INK={sus:'var(--on-sus)',gap:'var(--stripe)',prod:'var(--bg)',veic:'#1a0d02',pub:'#ffffff',cong:'#ffffff',prev:'#ffffff'};
+const INK={sus:'var(--on-sus)',gap:'var(--stripe)',prod:'var(--bg)',veic:'var(--bg)',pub:'var(--bg)',cong:'var(--ink)',prev:'var(--ink)'};
 function render(){
   const h=location.hash.replace('#','');
   const t=M.bySlug[h]||M.regiao;

@@ -9,6 +9,11 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400..900&family=Hanken+Grotesk:wght@400..700&family=Overpass+Mono:wght@600&display=swap">
 <link rel="stylesheet" href="assets/style.css">
 <link rel="icon" href="assets/fnp.png">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Custo do Trânsito RMC">
+<meta property="og:description" content="Para cada R$ 1 que o SUS pagou por internações de trânsito, a conta real foi de pelo menos R$ 27. Campinas e os 20 municípios da região.">
+<meta property="og:image" content="assets/fnp.png">
+<meta name="theme-color" content="#0d0f13">
 
 </head>
 <body data-page="municipio">
@@ -19,13 +24,14 @@
       <label class="sr" for="city">Município</label>
       <select id="city"></select>
       <button type="button" class="btn ghost" id="printBtn">Imprimir ficha</button>
+      <a class="btn ghost" href="sua-cidade.html">Digitar meus números</a>
     </div>
     <div class="cityhead" style="margin-top:44px">
       <div>
         <p class="eyebrow">Ficha do município · <span id="ano"></span></p>
         <h1 class="display" id="name" style="margin-top:14px">Campinas</h1>
       </div>
-      <div class="tilemap mini no-print" id="mini" aria-hidden="true"></div>
+      <div class="no-print"><div class="tilemap mini" id="mini" aria-hidden="true"></div><p class="small" style="margin-top:8px">na região</p></div>
     </div>
     <p class="lede" id="lead" style="margin-top:28px;max-width:40em"></p>
 
@@ -76,6 +82,7 @@
   </div></section>
 
   <section class="sec no-print"><div class="wrap">
+    <p class="fine" style="margin:0 0 24px">Diárias de UTI: não estão nas bases públicas. Informe as do seu hospital na <a href="calculadora.html">calculadora</a>.</p>
     <div class="prevnext" id="pn"></div>
   </div></section>
 </main>
@@ -107,7 +114,7 @@ function render(){
   document.getElementById('name').textContent=c.nome;
   UI.tilemap(document.getElementById('mini'),{key:'internPor100k',fmtv:v=>F.int(v),current:c.slug});
   document.getElementById('lead').innerHTML=`${F.int(c.internacoes)} internações · ${F.money(c.pago)} pagos pelo SUS · custo de ao menos ${F.money(c.real)}`;
-  document.getElementById('bar').innerHTML=UI.gapbar(c.pago,c.real,'anim');
+  document.getElementById('bar').innerHTML=UI.unitchart(c.pago,c.real);
   document.getElementById('vTab').textContent=F.money(c.pago);
   document.getElementById('vGap').textContent=F.money(c.gap);
   document.getElementById('figs').innerHTML=`
