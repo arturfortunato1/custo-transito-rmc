@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<title>Método e fontes · Custo do Trânsito RMC</title>
+{{HEAD}}
+</head>
+<body data-page="metodo">
+<div id="nav"></div>
+<main>
+  <section class="hero"><div class="wrap">
+    <p class="eyebrow">Método e fontes</p>
+    <h1 class="display" style="margin-top:18px;font-size:clamp(40px,6vw,80px);max-width:14ch">Como calculamos cada número.</h1>
+    <p class="lede">Cada número do site é dado oficial ou estimativa, e a etiqueta ao lado dele diz qual. Quem discordar de uma premissa pode mudá-la na calculadora e ver o efeito.</p>
+  </div></section>
+
+  <section class="sec-tight" id="fontes"><div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">Fontes</p>
+      <h2 class="h2" style="font-size:clamp(28px,3.4vw,40px)">O que é oficial e o que é estimativa.</h2>
+    </div>
+    <div class="src-wrap"><table class="src-table">
+      <thead><tr><th>Base</th><th>Para que usamos</th><th>Status</th></tr></thead>
+      <tbody id="src"></tbody>
+    </table></div>
+  </div></section>
+
+  <section class="sec"><div class="wrap">
+    <div class="prose">
+      <h3>A conta da saúde</h3>
+      <p><b>O que o SUS pagou.</b> Soma do valor das AIH (autorizações de internação hospitalar) pagas em 2025 para internações com causa externa V01 a V89, por município de residência da vítima, segundo o SIH/SUS. É um dado oficial e é um <b>piso</b>: não inclui rede privada, convênios, atendimentos de pronto-socorro sem internação nem internações sem causa externa registrada.</p>
+      <p><b>Mortes.</b> Vêm do SIM, por município de residência, em 2024, o último ano fechado. O SIM conta todas as mortes (no local, a caminho e no hospital). O SIH conta só quem morreu internado pelo SUS, por isso a calculadora usa o nome “óbitos hospitalares”.</p>
+      <p><b>Dias de UTI.</b> O SIH registra os dias de UTI apenas nos microdados completos, que ainda não obtivemos. Por isso o site mostra “n/d” em vez de estimar. Quem tiver o dado do hospital pode informar na calculadora.</p>
+
+      <h3 id="estimativa">O custo estimado além da tabela</h3>
+      <p>O SIH informa o que a tabela pagou, não quanto o atendimento custou. Para estimar o custo, usamos o estudo do IPEA e da ANTP sobre acidentes em aglomerações urbanas (2003), que mediu o custo hospitalar por vítima internada. Corrigimos os valores pelo IPCA até dezembro de 2025.</p>
+      <code class="formula">custo estimado = internações × custo hospitalar por internado</code>
+      <p>No <b>cenário conservador</b>, usado como padrão, cada internação custa o valor de um internado moderado. No <b>cenário médio</b>, o valor médio do estudo. A estimativa depende do perfil dos pacientes: a tabela paga em média <b id="mPagoMedia"></b> por internação, e esse perfil inclui casos leves que o estudo não tem. Por isso o resultado é uma referência de ordem de grandeza, com margem de ±50% adotada pelo próprio estudo, e não uma medida do gasto de cada hospital. O melhor dado seria o custo apurado pelo hospital, e a calculadora aceita esse valor.</p>
+      <div class="src-wrap"><table class="src-table" id="ref"></table></div>
+
+      <h3>A conta completa</h3>
+      <p>O custo para a sociedade soma o hospital estimado e o restante do custo por vítima do IPEA e da ANTP: produção perdida, danos a veículos e propriedade, poder público fora da saúde e congestionamento. O custo por vítima é R$ 372 mil por morte e R$ 48 mil por ferido, em valores de dez/2025. Como só conhecemos as internações, tratamos cada internado como um ferido e o total é um piso.</p>
+      <code class="formula">total = hospital estimado + (mortes × custo por morte + internações × custo por ferido) × parte não hospitalar</code>
+      <p>A parte não hospitalar é o que sobra da composição do IPEA/ANTP depois de tirar o atendimento médico-hospitalar, o resgate e a reabilitação, que já estão no hospital estimado. Os auxílios e pensões do INSS ficam fora do total por padrão, por serem transferências de renda.</p>
+      <div class="src-wrap"><table class="src-table" id="comp"></table></div>
+
+      <h3 id="pib">Por que o total difere dos 3,8% do PIB</h3>
+      <p>A FNP cita perdas de até 3,8% do PIB com sinistros de trânsito. Este site chega a <b id="mPib"></b> do PIB da região. A diferença tem causas conhecidas, e não localizamos a metodologia que sustenta o número de 3,8%.</p>
+      <p>Nosso valor é deliberadamente um piso. Conta só internações pagas pelo SUS e mortes registradas, cada internado entra como um ferido médio e os valores unitários vêm de um estudo de 2003 corrigido só pela inflação. Estudos nacionais incluem todos os feridos, rodovias e custos que não calculamos. O IPEA estimou em 2015 que os acidentes urbanos custam entre R$ 9,9 e R$ 12,9 bilhões por ano no Brasil e recomenda não somar com os custos das rodovias, o que mostra como o resultado depende do método.</p>
+
+      <h3>Quem paga</h3>
+      <p>Segundo o SIOPS, em 2025 as prefeituras da região pagaram <b id="mPropria"></b> da despesa de saúde com recursos próprios, e as transferências de União e estado cobriram <b id="mTransf"></b>. Isso vale para toda a saúde, não só para o trânsito.</p>
+
+      <h3>Tipo de vítima</h3>
+      <p>A causa externa da internação segue o capítulo XX da CID-10: pedestre (V01–V09), ciclista (V10–V19), motociclista (V20–V29), ocupante de automóvel e caminhonete (V40–V59) e outros. A lesão, nos capítulos S e T, é a base da calculadora por diagnóstico.</p>
+
+      <h3>Limites</h3>
+      <p>Os números por município são por residência da vítima. Campinas e outras cidades com hospital de referência atendem moradores de toda a região, e o custo fica onde a vítima é tratada. As mortes de 2025 ainda são preliminares e por isso o site usa 2024. A calculadora por CID-10 usa o procedimento do SIGTAP mais próximo de cada diagnóstico, e a classificação em moderado ou grave é do site.</p>
+
+      <h3>Valores da tabela SUS usados na calculadora</h3>
+      <div class="src-wrap"><table class="src-table" id="sigtap"></table></div>
+    </div>
+  </div></section>
+</main>
+<div id="footer"></div>
+<script src="assets/data-real.js"></script>
+<script src="assets/data.js"></script>
+<script src="assets/model.js"></script>
+<script src="assets/ui.js"></script>
+<script>
+(function(){
+const D=RMC, F=M.fmt, esc=UI.esc, R=M.regiao;
+document.getElementById('src').innerHTML=D.fontes.map(f=>`<tr>
+  <td><b>${esc(f.nome)}</b><br><span class="small">${esc(f.orgao)}</span><br><a class="small" href="${f.url}" target="_blank" rel="noopener">Abrir a base</a></td>
+  <td>${esc(f.uso)}</td>
+  <td>${f.real===true?'<span class="pill ok">Dado oficial</span>':'<span class="pill wait"><span>Estimativa</span></span>'}</td></tr>`).join('');
+document.getElementById('mPagoMedia').textContent=F.brl(R.pago/R.internacoes);
+const c=M.contaCompleta(R,false);
+document.getElementById('mPib').textContent=F.dec(c.pibShare*100,2)+'%';
+document.getElementById('mPropria').textContent=F.pct(R.despPropria/R.despSaude);
+document.getElementById('mTransf').textContent=F.pct((R.transfUniao+R.transfEstado)/R.despSaude);
+const num=v=>F.brl(+v);
+const ip=id=>D.ipeaTabela.find(r=>r.id===id);
+document.getElementById('ref').innerHTML=`<thead><tr><th>Referência</th><th>Preço original</th><th>Corrigido, dez/2025</th></tr></thead><tbody>`+
+ ['ipea03_hosp_internado_moderado','ipea03_hosp_internado_medio','ipea03_hosp_internado_grave','ipea03_vitima_morte','ipea03_vitima_ferido'].map(id=>{const r=ip(id);return `<tr><td>${esc(r.parametro)}<br><span class="small">${esc(r.estudo)}, ${esc(r.unidade)}</span></td><td class="n">${num(r.valor_original)}<br><span class="small">${esc(r.data_preco_original)}</span></td><td class="n"><b>${num(r.valor_dez2025)}</b></td></tr>`}).join('')+'</tbody>';
+document.getElementById('comp').innerHTML=`<thead><tr><th>Componente do custo por vítima, IPEA/ANTP 2003</th><th>Participação</th></tr></thead><tbody>`+D.composicao.map(r=>`<tr><td>${esc(r.componente)}</td><td class="n">${(+r.participacao_pct).toLocaleString('pt-BR')}%</td></tr>`).join('')+'</tbody>';
+document.getElementById('sigtap').innerHTML=`<thead><tr><th>Procedimento</th><th>Total hospitalar</th><th>Permanência</th></tr></thead><tbody>`+D.sigtap.filter(r=>+r.total_hospitalar_rs>0).map(r=>`<tr><td><a href="${r.url}" target="_blank" rel="noopener">${esc(r.procedimento.toLowerCase())}</a><br><span class="small">${r.codigo}</span></td><td class="n">${F.brl(+r.total_hospitalar_rs)}</td><td class="n">${r.media_permanencia_dias?r.media_permanencia_dias+' dias':'–'}</td></tr>`).join('')+'</tbody>';
+})();
+</script>
+</body>
+</html>

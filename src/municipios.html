@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<title>Municípios · Custo do Trânsito RMC</title>
+{{HEAD}}
+</head>
+<body data-page="municipios">
+<div id="nav"></div>
+<main>
+  <section class="hero"><div class="wrap">
+    <p class="eyebrow">Os 20 municípios</p>
+    <h1 class="display" style="margin-top:18px;font-size:clamp(40px,6vw,80px)" id="h1">Uma ficha para cada cidade.</h1>
+    <p class="lede" id="lede"></p>
+  </div></section>
+
+  <section class="sec-tight"><div class="wrap">
+    <div id="notice" style="margin-bottom:32px"></div>
+    <div class="tools" id="tools" hidden>
+      <div class="seg" role="group" aria-label="Comparar por" id="metric">
+        <button type="button" data-k="internPor100k" aria-pressed="true">Internações por 100 mil hab.</button>
+        <button type="button" data-k="obitosPor100k" aria-pressed="false">Mortes por 100 mil hab.</button>
+        <button type="button" data-k="leitosAno" aria-pressed="false">Leitos ocupados</button>
+        <button type="button" data-k="real" aria-pressed="false">Custo estimado</button>
+      </div>
+      <p class="small" id="metricNote"></p>
+    </div>
+    <div class="map-grid">
+      <div>
+        <div class="tilemap" id="map" aria-label="Mapa esquemático dos 20 municípios"></div>
+        <div class="scale" id="scale" hidden><span>Menor</span><i aria-hidden="true"></i><span>Maior</span></div>
+        <p class="small" style="margin-top:20px;max-width:46ch">Mapa esquemático: cada quadrado é um município, na posição aproximada dentro da região. O tamanho não representa área nem população.</p>
+      </div>
+      <div style="min-width:0">
+        <ol class="rank" id="rank"></ol>
+        <p class="small" id="legend" style="margin-top:16px"></p>
+      </div>
+    </div>
+  </div></section>
+</main>
+<div id="footer"></div>
+<script src="assets/data-real.js"></script>
+<script src="assets/data.js"></script>
+<script src="assets/model.js"></script>
+<script src="assets/ui.js"></script>
+<script>
+(function(){
+const F=M.fmt, R=M.regiao, D=RMC, esc=UI.esc;
+const alpha=[...M.cidades].sort((a,b)=>a.nome.localeCompare(b.nome,'pt-BR'));
+if(!D.comparavel){
+  document.getElementById('lede').textContent='Escolha o seu município para abrir a ficha com a conta da saúde, a carga no hospital e a economia possível com prevenção.';
+  document.getElementById('notice').innerHTML=`<div class="notice"><i aria-hidden="true"></i><p><b>Sem ranking por enquanto.</b> Mortes do SIM e internações do SIH ainda são estimativas ilustrativas, e comparar vizinhos com número ilustrativo seria injusto. As posições e as cores entram assim que os dados oficiais chegarem. A lista está em ordem alfabética.</p></div>`;
+  UI.tilemap(document.getElementById('map'),{neutral:true});
+  const byPop=[...alpha].sort((a,b)=>b.pop-a.pop);
+  document.getElementById('rank').innerHTML=alpha.map(c=>`<li><a class="rk c3" href="municipio.html#${c.slug}">
+    <span class="i"></span><span class="nm"><b>${esc(c.nome)}</b><small class="n">${F.int(c.pop)} habitantes</small></span><span class="x">Abrir ficha →</span></a></li>`).join('');
+  document.getElementById('legend').innerHTML=UI.src('pop');
+  return;
+}
+document.getElementById('h1').textContent='Cada cidade sente o trânsito de um jeito.';
+document.getElementById('lede').textContent='Escolha o que comparar. O mapa e a lista mudam juntos. Os números são por município de residência da vítima, e hospitais de referência atendem moradores de outras cidades. Toque em um município para abrir a ficha.';
+document.getElementById('tools').hidden=false; document.getElementById('scale').hidden=false;
+const METRICS={
+  internPor100k:{f:v=>F.int(v),note:`Média da região: ${F.int(R.internPor100k)} internações por 100 mil habitantes.`,bar:'heat',sub:c=>`${F.int(c.internacoes)} internações, ${F.int(c.pop)} hab.`},
+  obitosPor100k:{f:v=>F.dec(v),note:`Média da região: ${F.dec(R.obitosPor100k)} mortes por 100 mil habitantes, SIM ${D.anoObitos}.`,bar:'death',sub:c=>`${F.int(c.obitos)} mortes em ${D.anoObitos}`},
+  leitosAno:{f:v=>F.dec(v,1),note:`Na região, vítimas de trânsito ocupam ${F.int(R.leitosAno)} leitos o ano inteiro, pelo SIH.`,bar:'heat',sub:c=>`${F.int(c.leitosDia)} dias de internação`},
+  real:{f:F.money,note:`Estimativa para a região: ${F.money(R.real)}, cenário conservador.`,bar:'cost',sub:c=>`pago ${F.money(c.pago)} · estimado ${F.money(c.real)}`}
+};
+const LEG={cost:'<i class="key" style="--c:var(--sus)"></i>Pago pelo SUS (oficial) &nbsp; <i class="key h"></i>Estimado além da tabela',death:'<i class="key" style="--c:var(--death)"></i>Mortes por 100 mil habitantes',heat:'<i class="key" style="--c:var(--heat)"></i>Valor oficial do SIH, por município de residência da vítima'};
+let key='internPor100k';
+try{const k=localStorage.getItem('rmc-metric');if(k&&METRICS[k])key=k;}catch(e){}
+function render(){
+  const m=METRICS[key];
+  document.querySelectorAll('#metric button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.k===key));
+  document.getElementById('metricNote').textContent=m.note;
+  document.getElementById('legend').innerHTML=LEG[m.bar];
+  UI.tilemap(document.getElementById('map'),{key,fmtv:m.f});
+  const list=M.rank(key), max=list[0][key];
+  document.getElementById('rank').innerHTML=list.map((c,i)=>{
+    const w=c[key]/max*100;
+    let bar;
+    if(m.bar==='cost'){const s=w*c.pago/c.real;bar=`<i class="s" style="width:${s}%"></i><i class="g" style="width:${w-s}%"></i>`}
+    else if(m.bar==='death'){bar=`<i class="d" style="width:${w}%"></i>`}
+    else{bar=`<i class="h" style="width:${w}%"></i>`}
+    return `<li><a class="rk c4" href="municipio.html#${c.slug}">
+      <span class="i n">${i+1}</span>
+      <span class="nm"><b>${esc(c.nome)}</b><small class="n">${m.sub(c)}</small></span>
+      <span class="bar" aria-hidden="true">${bar}</span>
+      <span class="v n">${m.f(c[key])}</span></a></li>`}).join('');
+}
+document.getElementById('metric').addEventListener('click',e=>{const b=e.target.closest('[data-k]');if(!b)return;key=b.dataset.k;try{localStorage.setItem('rmc-metric',key)}catch(err){}render();});
+render();
+})();
+</script>
+</body>
+</html>

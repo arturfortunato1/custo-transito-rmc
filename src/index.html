@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<title>Custo do Trânsito RMC</title>
+<meta name="description" content="Quanto os sinistros de trânsito custam aos 20 municípios da Região Metropolitana de Campinas, quanto disso a tabela do SUS não cobre, e quanto a prevenção economiza.">
+{{HEAD}}
+</head>
+<body data-page="inicio">
+<div id="nav"></div>
+
+<main>
+  <section class="hero"><div class="wrap">
+    <div id="org"></div>
+    <p class="eyebrow" style="margin-top:28px">Região Metropolitana de Campinas · 20 municípios · <span id="ano"></span></p>
+    <h1 class="display" style="margin-top:22px;max-width:14ch">O SUS pagou <span class="mark-sus n" id="hPago">R$&nbsp;4,9&nbsp;mi</span> por <span class="n" id="hInt">2.631</span> internações de trânsito. Atender essas vítimas custa ao menos <span class="mark-gap"><b class="n" id="hEst">R$&nbsp;134&nbsp;mi</b></span>.</h1>
+    <p class="lede">Em 2025, na Região Metropolitana de Campinas, a tabela SIGTAP pagou em média <b class="n" id="hMedia" style="color:var(--ink)"></b> por internação. O custo estimado pelos estudos do IPEA/ANTP é bem maior, e a diferença sai dos fundos de saúde de prefeituras e estado.</p>
+
+    <div style="margin-top:64px">
+      <div id="heroBar"></div>
+      <div class="gap-legend">
+        <div class="s"><span class="k"><i class="key" style="--c:var(--sus)"></i>Tabela SUS</span><span class="v n" id="hTab"></span></div>
+        <div></div>
+        <div class="r"><span class="k"><i class="key h"></i>Estimado além da tabela, fundos de saúde</span><span class="v n" id="hGap"></span></div>
+      </div>
+      <div style="display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center;margin-top:14px">
+        <span class="src ok">pago · SIH/SUS 2025, valor oficial</span>
+        <span class="src est">estimado · IPEA/ANTP corrigido pelo IPCA, margem de ±50%</span>
+      </div>
+      <p class="small" style="margin-top:12px;max-width:62ch">Estimativa conservadora: usa o custo hospitalar de um internado <i>moderado</i> do estudo do IPEA/ANTP (<b class="n" id="hCusto"></b>, valores de dez/2025). <a href="metodo.html#estimativa">Como estimamos</a>. Só entram internações pagas pelo SUS, então os dois números são um piso.</p>
+      <div style="display:none">
+      </div>
+    </div>
+  </div></section>
+
+  <section class="sec"><div class="wrap">
+    <div class="sec-head" style="margin-bottom:28px">
+      <p class="eyebrow">Carga no hospital</p>
+      <h2 class="h2">O peso cai sobre a rede de saúde.</h2>
+      <p class="lede" id="siopsLede"></p>
+    </div>
+    <div class="figs" id="figs"></div>
+  </div></section>
+
+  <section class="sec"><div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">Quem são as vítimas · CID-10, capítulo XX</p>
+      <h2 class="h2">A moto lidera as internações.</h2>
+      <p class="lede">A causa externa de cada internação é registrada com um código V01 a V89. Ele diz se a vítima era pedestre, ciclista, motociclista ou ocupante de automóvel, e mostra onde a prevenção rende mais.</p>
+    </div>
+    <div id="vit"></div>
+    <div style="display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center;margin-top:16px"><span class="src ok">dado oficial · SIH/SUS 2025, internações por causa externa V01–V89</span></div>
+    <div style="margin-top:56px">
+      <p class="quote" id="quote"></p>
+      <p class="cite" id="quoteSrc"></p>
+    </div>
+  </div></section>
+
+  <section class="sec" id="prevencao"><div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">Prevenção</p>
+      <h2 class="h2">Salvar vidas também salva recursos.</h2>
+      <p class="lede">Arraste para ver quanto a região deixa de gastar e quantos leitos libera quando reduz mortes e internações.</p>
+    </div>
+    <div id="prev"></div>
+    <div class="example" style="margin-top:40px;max-width:760px" id="ex"></div>
+  </div></section>
+
+  <section class="sec"><div class="wrap">
+    <div class="map-grid">
+      <div>
+        <div class="sec-head" style="margin-bottom:32px">
+          <p class="eyebrow">Mapa da região</p>
+          <h2 class="h2" id="mapTitle">Os 20 municípios.</h2>
+          <p class="lede" id="mapLede"></p>
+        </div>
+        <div class="tilemap" id="map" aria-label="Mapa esquemático dos 20 municípios"></div>
+        <div class="scale" id="scale"><span>Menor</span><i aria-hidden="true"></i><span>Maior custo por habitante</span></div>
+      </div>
+      <div style="padding-top:8px" id="mapSide"></div>
+    </div>
+  </div></section>
+
+  <section class="sec"><div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">Use os dados</p>
+      <h2 class="h2">Leve a conta para a mesa de decisão.</h2>
+    </div>
+    <div class="doors" style="grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr))">
+      <a class="door" href="sua-cidade.html">
+        <span class="glyph" aria-hidden="true"><svg width="120" height="28" viewBox="0 0 120 28"><rect width="120" height="28" rx="8" fill="var(--bg-3)"/><rect x="8" y="8" width="44" height="12" rx="3" fill="var(--ink)"/><rect x="58" y="8" width="20" height="12" rx="3" fill="var(--sus)"/></svg></span>
+        <h3 class="h3">Calcule a sua cidade</h3>
+        <p>Digite mortes, internações e diárias do SIH e veja a conta da saúde, os leitos ocupados e a economia possível. Serve para qualquer município.</p>
+        <span class="go">Começar</span>
+      </a>
+      <a class="door" href="municipio.html#campinas">
+        <span class="glyph" aria-hidden="true"><svg width="44" height="44" viewBox="0 0 44 44"><rect x="2" y="2" width="18" height="18" rx="4" fill="var(--bg-3)"/><rect x="24" y="2" width="18" height="18" rx="4" fill="var(--ink)"/><rect x="2" y="24" width="18" height="18" rx="4" fill="var(--bg-3)"/><rect x="24" y="24" width="18" height="18" rx="4" fill="var(--bg-3)"/></svg></span>
+        <h3 class="h3">A ficha de cada cidade da RMC</h3>
+        <p>Uma página por município, pronta para imprimir e levar à Câmara, ao estado ou ao Ministério.</p>
+        <span class="go">Abrir as fichas</span>
+      </a>
+      <a class="door" href="calculadora.html">
+        <span class="glyph" aria-hidden="true"><span class="km" style="font-size:15px;padding:9px 10px 8px">S72.3</span>&nbsp;<span class="km" style="font-size:15px;padding:9px 10px 8px;background:var(--v-moto)">V23</span></span>
+        <h3 class="h3">Quanto custa cada diagnóstico</h3>
+        <p>Monte casos pela lesão (S/T) e pela causa (V01–V89) e veja a linha de cuidado, os leitos e o custo real.</p>
+        <span class="go">Abrir a calculadora</span>
+      </a>
+      <a class="door" href="quem-paga.html">
+        <span class="glyph" aria-hidden="true"><svg width="120" height="20" viewBox="0 0 120 20"><rect width="34" height="20" rx="4" fill="var(--sus)"/><rect x="37" width="26" height="20" rx="4" fill="var(--sign)"/><rect x="66" width="20" height="20" rx="4" fill="var(--c-pref)"/><rect x="89" width="31" height="20" rx="4" fill="var(--c-dano)"/></svg></span>
+        <h3 class="h3">Quem paga a conta</h3>
+        <p>Primeiro a saúde, depois a prefeitura, as famílias, as empresas e a previdência.</p>
+        <span class="go">Ver a conta completa</span>
+      </a>
+    </div>
+  </div></section>
+
+  <section class="sec"><div class="wrap">
+    <div class="sec-head" style="margin-bottom:0">
+      <p class="eyebrow">De onde vêm os números</p>
+      <h2 class="h2" style="font-size:clamp(28px,3.4vw,40px)">Dados públicos, método aberto.</h2>
+      <p class="lede">Óbitos do SIM, internações, diárias e valores do SIH/SUS e da tabela SIGTAP, gasto declarado no SIOPS, população e PIB do IBGE, e a estrutura de custos dos estudos do IPEA e da ANTP. Cada número traz uma etiqueta dizendo se é dado oficial ou estimativa.</p>
+      <div class="actions" style="margin-top:12px"><a class="btn ghost" href="metodo.html">Como calculamos</a></div>
+    </div>
+  </div></section>
+</main>
+
+<div id="footer"></div>
+<script src="assets/data-real.js"></script>
+<script src="assets/data.js"></script>
+<script src="assets/model.js"></script>
+<script src="assets/ui.js"></script>
+<script>
+(function(){
+const D=RMC, R=M.regiao, F=M.fmt, esc=UI.esc;
+document.getElementById('org').innerHTML=UI.ORG;
+document.getElementById('ano').textContent=D.ano;
+document.getElementById('hPago').textContent=F.money(R.pago);
+document.getElementById('hInt').textContent=F.int(R.internacoes);
+document.getElementById('hEst').textContent=F.money(R.real);
+document.getElementById('hMedia').textContent=F.brl(R.pago/R.internacoes);
+document.getElementById('hCusto').textContent=F.brl(R.custoInt)+' por internado';
+document.getElementById('heroBar').innerHTML=UI.gapbar(R.pago,R.real,'anim');
+document.getElementById('hTab').textContent=F.money(R.pago);
+document.getElementById('hGap').textContent=F.money(R.gap);
+const propria=R.despPropria/R.despSaude, transf=(R.transfUniao+R.transfEstado)/R.despSaude;
+document.getElementById('siopsLede').innerHTML=`Nas 20 cidades, <b class="n">${F.pct(propria)}</b> da despesa de saúde de ${D.ano} saiu de recursos próprios das prefeituras e só <b class="n">${F.pct(transf)}</b> veio de transferências do SUS (União e estado). Quando a tabela paga menos que o custo, quem completa é o caixa municipal. <span class="src ok" style="margin-left:6px">SIOPS 2025</span>`;
+document.getElementById('figs').innerHTML=`
+  <div class="fig"><span class="v n">${F.int(R.leitosAno)}</span><span class="k">leitos ocupados o ano inteiro por vítimas de trânsito, ${F.int(R.leitosDia)} dias de internação</span>${UI.src('dias')}</div>
+  <div class="fig"><span class="v" style="color:var(--muted)">n/d</span><span class="k">diárias de UTI. O dado só existe nos microdados do SIH e ainda não foi obtido</span><span class="src est">indisponível, não estimado</span></div>
+  <div class="fig"><span class="v n">${F.int(R.internacoes)}</span><span class="k">internações pagas pelo SUS, um piso do total</span>${UI.src('internacoes')}</div>
+  <div class="fig death"><span class="v n">${F.int(R.obitos)}</span><span class="k">mortes no trânsito em ${D.anoObitos}, por residência</span>${UI.src('obitos')}</div>`;
+UI.vitimas(document.getElementById('vit'),R.vitimas);
+const mo=D.vitimasRMC.find(v=>v.id==='moto');
+document.getElementById('quote').textContent=`${F.pct(mo.share)} das internações de trânsito na RMC são de motociclistas: ${F.int(mo.n)} de ${F.int(R.internacoes)}.`;
+document.getElementById('quoteSrc').innerHTML=`SIH/SUS 2025, causa externa V20–V29. Em Campinas, a Rede Mário Gatti registra 73% das vítimas atendidas de moto (<a href="${D.fatos.motoMarioGatti.url}" target="_blank" rel="noopener">${D.fatos.motoMarioGatti.fonte}</a>).`;
+UI.prevencao(document.getElementById('prev'),R,{nome:'a região'});
+const cps=M.bySlug.campinas, f=D.fatos.campinasReducao, e=M.economia(cps,f.pct);
+document.getElementById('ex').innerHTML=`<p class="eyebrow">Exemplo · simulação</p>
+  <p class="h3" style="font-size:24px">${f.txt} Se uma queda de ${F.pct(f.pct)} valesse também para as internações, a conta estimada da saúde em Campinas cairia <span class="n">${F.money(e.saude)}</span> por ano e ${F.int(e.leitosDia)} leitos-dia ficariam livres.</p>
+  <p class="cite">Queda de mortes: <a href="${f.url}" target="_blank" rel="noopener">${f.fonte}</a>. Valores da conta: estimativa deste site, cenário conservador.</p>`;
+UI.tilemap(document.getElementById('map'),{key:'internPor100k',fmtv:v=>F.int(v)});
+document.getElementById('mapTitle').textContent='Onde há mais internações por habitante.';
+document.getElementById('mapLede').textContent='Internações de trânsito pagas pelo SUS por 100 mil habitantes, por município de residência da vítima. Toque em um município para abrir a ficha.';
+document.getElementById('scale').lastElementChild.textContent='Mais internações por habitante';
+const top=M.rank('internPor100k').slice(0,5);
+document.getElementById('mapSide').innerHTML=`<p class="eyebrow" style="margin-bottom:14px">Mais internações por 100 mil habitantes</p><ol class="rank">`+top.map((c,i)=>`<li><a class="rk c3" href="municipio.html#${c.slug}">
+  <span class="i n">${i+1}</span><span class="nm"><b>${esc(c.nome)}</b><small class="n">${F.int(c.internacoes)} internações, ${F.int(c.obitos)} mortes</small></span>
+  <span class="v n">${F.int(c.internPor100k)}</span></a></li>`).join('')+`</ol><p class="small" style="margin-top:16px">Município de residência da vítima. Campinas e outras cidades com hospitais de referência atendem moradores de toda a região.</p><div class="actions" style="margin-top:20px"><a class="btn" href="municipios.html">Ver os 20 municípios</a></div>`;
+})();
+</script>
+</body>
+</html>

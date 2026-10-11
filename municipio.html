@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<title>Ficha da cidade · Custo do Trânsito RMC</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400..900&family=Hanken+Grotesk:wght@400..700&family=Overpass+Mono:wght@600&display=swap">
+<link rel="stylesheet" href="assets/style.css">
+<link rel="icon" href="assets/fnp.png">
+
+</head>
+<body data-page="municipio">
+<div id="nav"></div>
+<main>
+  <section class="hero" style="padding-top:48px"><div class="wrap">
+    <div class="picker no-print">
+      <label class="sr" for="city">Município</label>
+      <select id="city"></select>
+      <button type="button" class="btn ghost" id="printBtn">Imprimir ficha</button>
+    </div>
+    <div class="cityhead" style="margin-top:44px">
+      <div>
+        <p class="eyebrow">Ficha do município · <span id="ano"></span></p>
+        <h1 class="display" id="name" style="margin-top:14px">Campinas</h1>
+      </div>
+      <div class="tilemap mini no-print" id="mini" aria-hidden="true"></div>
+    </div>
+    <p class="lede" id="lead" style="margin-top:28px;max-width:40em"></p>
+
+    <div style="margin-top:52px">
+      <div id="bar"></div>
+      <div class="gap-legend">
+        <div class="s"><span class="k"><i class="key" style="--c:var(--sus)"></i>Tabela SUS</span><span class="v n" id="vTab"></span></div>
+        <div></div>
+        <div class="r"><span class="k"><i class="key h"></i>Estimado além da tabela, fundos de saúde</span><span class="v n" id="vGap"></span></div>
+      </div>
+      <div style="margin-top:12px" id="barSrc"></div>
+    </div>
+  </div></section>
+
+  <section class="sec-tight"><div class="wrap"><div class="figs" id="figs"></div></div></section>
+
+  <section class="sec"><div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">Quem são as vítimas · CID-10, capítulo XX</p>
+      <h2 class="h2">Tipo de vítima internada.</h2>
+    </div>
+    <div id="vit"></div>
+    <div style="margin-top:16px"><span class="src ok">dado oficial · SIH/SUS 2025, causa externa V01–V89</span></div>
+  </div></section>
+
+  <section class="sec"><div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">Prevenção</p>
+      <h2 class="h2" id="prevTitle">Quanto a cidade economiza.</h2>
+    </div>
+    <div id="prev"></div>
+  </div></section>
+
+  <section class="sec" id="cmpSec"><div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">Na região</p>
+      <h2 class="h2" id="cmpTitle">Como a cidade se compara.</h2>
+      <p class="lede">Cada ponto é um dos 20 municípios. A linha tracejada é a mediana da região.</p>
+    </div>
+    <div class="strips" id="strips"></div>
+  </div></section>
+
+  <section class="sec"><div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">A conta completa</p>
+      <h2 class="h2">Além do hospital.</h2>
+      <p class="lede" id="payLead"></p>
+    </div>
+    <div class="stack" id="stack" style="height:20px;border-radius:6px" aria-hidden="true"></div>
+    <ul class="legend" id="stackLegend" style="margin-top:20px;max-width:620px"></ul>
+    <div class="actions no-print">
+      <a class="btn" id="goPay" href="quem-paga.html">Ver a conta detalhada</a>
+      <a class="btn ghost" id="goCalc" href="calculadora.html">Simular casos por diagnóstico</a>
+    </div>
+  </div></section>
+
+  <section class="sec no-print"><div class="wrap">
+    <div class="prevnext" id="pn"></div>
+  </div></section>
+</main>
+<div id="footer"></div>
+<script src="assets/data-real.js"></script>
+<script src="assets/data.js"></script>
+<script src="assets/model.js"></script>
+<script src="assets/ui.js"></script>
+<script>
+(function(){
+const F=M.fmt, R=M.regiao, D=RMC, esc=UI.esc;
+const alpha=[...M.cidades].sort((a,b)=>a.nome.localeCompare(b.nome,'pt-BR'));
+const sel=document.getElementById('city');
+sel.innerHTML=alpha.map(c=>`<option value="${c.slug}">${esc(c.nome)}</option>`).join('');
+document.getElementById('ano').textContent=D.ano;
+document.getElementById('printBtn').addEventListener('click',()=>{try{window.print()}catch(e){}});
+const median=a=>{const s=[...a].sort((x,y)=>x-y),m=s.length>>1;return s.length%2?s[m]:(s[m-1]+s[m])/2};
+const STRIPS=[
+  ['internPor100k','Internações','por 100 mil habitantes',v=>F.int(v)],
+  ['obitosPor100k','Mortes','por 100 mil habitantes',v=>F.dec(v)],
+  ['leitosAno','Leitos ocupados','o ano inteiro, por 100 mil hab.',v=>F.dec(v,1),c=>c.leitosAno/c.pop*1e5]
+];
+let upd=null, cur=null;
+function current(){const h=location.hash.replace('#','');return M.bySlug[h]?h:'campinas'}
+function render(){
+  const c=M.bySlug[current()]; cur=c;
+  sel.value=c.slug;
+  document.title=c.nome+' · Custo do Trânsito RMC';
+  document.getElementById('name').textContent=c.nome;
+  UI.tilemap(document.getElementById('mini'),{key:'internPor100k',fmtv:v=>F.int(v),current:c.slug});
+  document.getElementById('lead').innerHTML=`Em ${D.ano}, o SUS pagou <b class="n">${F.money(c.pago)}</b> por <b class="n">${F.int(c.internacoes)}</b> internações de moradores de ${esc(c.nome)} em acidentes de trânsito, ${F.brl(c.pago/c.internacoes)} por internação. O custo estimado de atender essas internações é de ao menos <b class="n">${F.money(c.real)}</b>. O trânsito matou <b class="n">${F.int(c.obitos)}</b> moradores em ${D.anoObitos}.`;
+  document.getElementById('bar').innerHTML=UI.gapbar(c.pago,c.real,'anim');
+  document.getElementById('vTab').textContent=F.money(c.pago);
+  document.getElementById('vGap').textContent=F.money(c.gap);
+  document.getElementById('barSrc').innerHTML=UI.src('pago','pago · SIH/SUS 2025, oficial')+' '+UI.src('custo','estimado · IPEA/ANTP, cenário conservador, margem de ±50%');
+  document.getElementById('figs').innerHTML=`
+    <div class="fig"><span class="v n">${F.dec(c.leitosAno,1)}</span><span class="k">leitos ocupados o ano inteiro, ${F.int(c.leitosDia)} dias de internação</span>${UI.src('dias')}</div>
+    <div class="fig"><span class="v" style="color:var(--muted)">n/d</span><span class="k">diárias de UTI, dado ainda não obtido</span><span class="src est">indisponível, não estimado</span></div>
+    <div class="fig"><span class="v n">${F.int(c.internacoes)}</span><span class="k">internações pagas pelo SUS, um piso</span>${UI.src('internacoes')}</div>
+    <div class="fig death"><span class="v n">${F.int(c.obitos)}</span><span class="k">mortes em ${D.anoObitos}, por residência${c.obitosOcorrencia!=null?`. Por local de ocorrência: ${F.int(c.obitosOcorrencia)}`:''}</span>${UI.src('obitos')}</div>`;
+  UI.vitimas(document.getElementById('vit'),c.vitimas);
+  document.getElementById('prevTitle').textContent=`Quanto ${c.nome} economiza.`;
+  const holder=document.getElementById('prev'); holder.innerHTML='';
+  UI.prevencao(holder,c,{nome:c.nome,get:()=>cur});
+  document.getElementById('cmpTitle').textContent=`Como ${c.nome} se compara.`;
+  document.getElementById('strips').innerHTML=STRIPS.map(([k,l,u,f,get])=>{
+    const g=get||(x=>x[k]), vals=M.cidades.map(g),lo=Math.min(...vals),hi=Math.max(...vals),pct=v=>(v-lo)/(hi-lo)*100,md=median(vals);
+    return `<div class="stripplot"><div class="lbl"><span>${l}, ${u}</span><b class="n">${f(g(c))}</b></div>
+      <div><div class="track">${M.cidades.filter(x=>x.slug!==c.slug).map(x=>`<span class="dot" style="left:${pct(g(x))}%" title="${esc(x.nome)}: ${f(g(x))}"></span>`).join('')}
+        <span class="med" style="left:${pct(md)}%"><span>mediana ${f(md)}</span></span>
+        <span class="dot me" style="left:${pct(g(c))}%" title="${esc(c.nome)}"></span></div>
+      <div class="track-ends"><span>${f(lo)}</span><span>${f(hi)}</span></div></div></div>`}).join('');
+  const conta=M.contaCompleta(c,{},false), counted=conta.grupos.filter(g=>!g.excl), pc=g=>g.tot/conta.total*100;
+  document.getElementById('payLead').innerHTML=`O custo hospitalar estimado, <b class="n">${F.money(conta.saude)}</b>, é só uma parte. Somando produção perdida, veículos, poder público e congestionamento, os sinistros de ${esc(c.nome)} custam ao menos <b class="n">${F.money(conta.total)}</b> por ano para a sociedade, ${F.dec(conta.pibShare*100,2)}% do PIB do município. <a href="metodo.html#pib">Por que este número difere dos 3,8% do PIB citados pela FNP?</a>`;
+  document.getElementById('stack').innerHTML=counted.map(g=>`<i style="width:${pc(g)}%;background:${g.cor}" title="${g.lbl}"></i>`).join('');
+  document.getElementById('stackLegend').innerHTML=counted.map(g=>`<li><i class="key${g.id==='gap'?' h':''}" style="--c:${g.cor}"></i><span>${g.lbl}</span><span class="val n">${F.money(g.tot)}</span><span class="pc n">${Math.round(pc(g))}%</span></li>`).join('');
+  document.getElementById('goPay').href='quem-paga.html#'+c.slug;
+  document.getElementById('goCalc').href='calculadora.html#'+c.slug;
+  const i=alpha.findIndex(x=>x.slug===c.slug),pv=alpha[(i+19)%20],nx=alpha[(i+1)%20];
+  document.getElementById('pn').innerHTML=`<a href="#${pv.slug}">← ${esc(pv.nome)}</a><a href="municipios.html">Todos os municípios</a><a href="#${nx.slug}">${esc(nx.nome)} →</a>`;
+}
+sel.addEventListener('change',()=>{location.hash=sel.value});
+addEventListener('hashchange',()=>{render();scrollTo({top:0,behavior:UI.reduce()?'auto':'smooth'})});
+render();
+})();
+</script>
+</body>
+</html>

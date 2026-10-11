@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<title>Calcule a sua cidade · Custo do Trânsito RMC</title>
+{{HEAD}}
+</head>
+<body data-page="sua-cidade">
+<div id="nav"></div>
+<main>
+  <section class="hero" style="padding-top:64px"><div class="wrap">
+    <p class="eyebrow">Para qualquer município</p>
+    <h1 class="display" style="margin-top:18px;font-size:clamp(40px,6vw,80px);max-width:14ch">Calcule a conta da sua cidade.</h1>
+    <p class="lede">Digite os números que a Secretaria de Saúde tira do SIM e do SIH. Em segundos você vê quanto o SUS pagou, quanto o atendimento custa de fato, quantos leitos as vítimas ocupam e quanto a prevenção economiza. Já vem preenchido com uma cidade da RMC como exemplo.</p>
+  </div></section>
+
+  <section class="sec-tight"><div class="wrap">
+    <div class="calc calc-city">
+      <div class="work no-print">
+        <label class="fld"><span class="lab">Começar pelos dados de</span>
+          <select id="pre"><option value="">Digitar do zero</option></select></label>
+        <label class="fld"><span class="lab">Nome do município</span><input type="text" id="fNome" style="font:inherit;font-size:16px;color:var(--ink);background:var(--bg-2);border:1px solid transparent;border-radius:12px;padding:11px 14px;width:100%" autocomplete="off"></label>
+        <div class="form-grid">
+          <label class="fld"><span class="lab">População</span><input type="number" id="fPop" min="0" step="1000"><span class="hint">Estimativa do IBGE.</span></label>
+          <label class="fld"><span class="lab">Mortes no trânsito</span><input type="number" id="fObitos" min="0" step="1"><span class="hint">SIM, CID-10 V01 a V89, por residência.</span></label>
+          <label class="fld"><span class="lab">Internações pelo SUS</span><input type="number" id="fInt" min="0" step="1"><span class="hint">SIH, causa externa V01 a V89.</span></label>
+          <label class="fld"><span class="lab">Valor pago pelas AIH (R$)</span><input type="number" id="fValor" min="0" step="1000"><span class="hint">SIH, valor total. Em branco, usamos a média da RMC.</span></label>
+          <label class="fld"><span class="lab">Dias de internação</span><input type="number" id="fDias" min="0" step="10"><span class="hint">SIH, dias de permanência. Em branco, usamos a média da RMC.</span></label>
+          <label class="fld"><span class="lab">Dias de UTI (opcional)</span><input type="number" id="fUti" min="0" step="10"><span class="hint">Do seu hospital. Não existe nas bases públicas que usamos.</span></label>
+        </div>
+        <label class="fld"><span class="lab">Referência de custo hospitalar</span>
+          <select id="fCen"><option value="conservador">Conservadora: internado moderado do IPEA/ANTP</option><option value="medio">Média do IPEA/ANTP</option></select>
+          <span class="hint">Define o custo estimado por internado. Se o seu hospital tem o custo apurado, ele é melhor que qualquer referência.</span></label>
+      </div>
+      <div style="min-width:0;display:grid;gap:40px">
+        <div>
+          <p class="eyebrow" id="rNome"></p>
+          <p class="display" style="font-size:clamp(34px,4.6vw,60px);margin-top:12px;max-width:16ch" id="rHead"></p>
+          <div style="margin-top:32px" id="rBar"></div>
+          <div class="gap-legend">
+            <div class="s"><span class="k"><i class="key" style="--c:var(--sus)"></i>Pago pelo SUS</span><span class="v n" id="rPago"></span></div>
+            <div></div>
+            <div class="r"><span class="k"><i class="key h"></i>Estimado além da tabela</span><span class="v n" id="rGap"></span></div>
+          </div>
+          <div id="rSrc" style="display:flex;flex-wrap:wrap;gap:8px;margin-top:12px"></div>
+        </div>
+        <div class="figs" id="rFigs"></div>
+        <div>
+          <p class="eyebrow" style="margin-bottom:14px">Prevenção</p>
+          <div id="prev"></div>
+        </div>
+        <div class="no-print"><button type="button" class="btn" id="printBtn">Imprimir resultado</button></div>
+      </div>
+    </div>
+  </div></section>
+</main>
+<div id="footer"></div>
+<script src="assets/data-real.js"></script>
+<script src="assets/data.js"></script>
+<script src="assets/model.js"></script>
+<script src="assets/ui.js"></script>
+<script>
+(function(){
+const D=RMC, F=M.fmt, esc=UI.esc;
+const alpha=[...D.municipios].sort((a,b)=>a.nome.localeCompare(b.nome,'pt-BR'));
+const $=id=>document.getElementById(id);
+$('pre').innerHTML+=alpha.map(c=>`<option value="${c.slug}">${esc(c.nome)}</option>`).join('');
+const num=id=>{const v=parseFloat($(id).value);return isFinite(v)&&v>0?v:0};
+function fill(slug){
+  const c=D.municipios.find(x=>x.slug===slug);
+  const v=c?{nome:c.nome,pop:c.pop,ob:c.obitos,int:c.internacoes,val:Math.round(c.valorAih),dias:c.diasInternacao}:{nome:'',pop:'',ob:'',int:'',val:'',dias:''};
+  $('fNome').value=v.nome;$('fPop').value=v.pop;$('fObitos').value=v.ob;$('fInt').value=v.int;$('fValor').value=v.val;$('fDias').value=v.dias;$('fUti').value='';
+}
+let upd=null;
+function terr(){
+  M.setCenario($('fCen').value);
+  const pop=num('fPop')||1;
+  return M.territorio({nome:$('fNome').value.trim()||'Seu município',slug:'sua',pop,obitos:num('fObitos'),internacoes:num('fInt'),valorAih:num('fValor'),diasInternacao:num('fDias'),diasUti:num('fUti'),pib:0,pibTotal:0});
+}
+function render(){
+  const t=terr();
+  $('rNome').textContent=`${t.nome} · cálculo com os números informados`;
+  if(!t.internacoes){ $('rHead').textContent='Informe as internações para ver o resultado.'; $('rFigs').innerHTML=''; $('rBar').innerHTML=''; return; }
+  $('rHead').innerHTML=`${F.money(t.pago)} pagos pelo SUS. Atender as ${F.int(t.internacoes)} internações custa ao menos ${F.money(t.real)}.`;
+  $('rBar').innerHTML=UI.gapbar(t.pago,t.real);
+  $('rPago').textContent=F.money(t.pago); $('rGap').textContent=F.money(t.gap);
+  $('rSrc').innerHTML=(t.pagoInformado?'<span class="src ok">pago · valor informado por você</span>':'<span class="src est">pago · valor médio da RMC aplicado</span>')+'<span class="src est">estimado · IPEA/ANTP, '+F.brl(t.custoInt)+' por internado</span>';
+  const c=M.contaCompleta(t,false);
+  $('rFigs').innerHTML=`
+    <div class="fig"><span class="v n">${F.dec(t.leitosAno,1)}</span><span class="k">leitos ocupados o ano inteiro, ${F.int(t.leitosDia)} dias${t.diasInformado?'':' (média da RMC)'}</span></div>
+    <div class="fig"><span class="v n">${t.utiDias?F.int(t.utiDias):'n/d'}</span><span class="k">diárias de UTI${t.utiDias?`, ${F.money(t.utiDias*D.utiDiaria)} na tabela SUS`:' (informe se tiver)'}</span></div>
+    <div class="fig"><span class="v n">${F.x0(t.fator)}</span><span class="k">custo estimado em relação ao valor pago</span></div>
+    <div class="fig"><span class="v n">${F.money(c.total)}</span><span class="k">custo para a sociedade, piso, com mortes e internações</span></div>`;
+  if(upd) upd();
+}
+fill('campinas'); $('pre').value='campinas';
+$('pre').addEventListener('change',()=>{fill($('pre').value);render()});
+document.querySelectorAll('input,#fCen').forEach(el=>el.addEventListener('input',render));
+$('fCen').addEventListener('change',render);
+upd=UI.prevencao($('prev'),terr(),{nome:'a cidade',get:terr});
+$('printBtn').addEventListener('click',()=>{try{window.print()}catch(e){}});
+render();
+})();
+</script>
+</body>
+</html>
