@@ -468,3 +468,6 @@ details.acc summary::-webkit-details-marker{display:none}
 details.acc summary::after{content:"+";color:var(--muted);font-size:22px}
 details.acc[open] summary::after{content:"−"}
 details.acc>*:not(summary){margin-bottom:16px}
+.keyline{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.keyline .src[data-d]{margin:0 2px 0 8px}
+.keyline .src[data-d]:first-child{margin-left:0}

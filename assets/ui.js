@@ -23,7 +23,6 @@ if(nav) nav.outerHTML = `<header class="nav"><div class="wrap">
   <a class="brand" href="index.html"><i aria-hidden="true"></i>Custo do Trânsito <span>RMC</span></a>
   <nav class="links" aria-label="Páginas">${PAGES.map(([h,l,id])=>`<a href="${h}"${id===page?' aria-current="page"':''}>${l}</a>`).join('')}</nav>
 </div></header>
-${`<div class="strip"><div class="wrap"><i aria-hidden="true"></i><span>${bannerText()} <a href="metodo.html#fontes">Fontes</a></span></div></div>`}
 <div class="print-only wrap"><span class="logo-plate"><img src="assets/fnp.png" alt="FNP" width="187" height="69"></span><span>Custo do Trânsito RMC · Frente Nacional de Prefeitas e Prefeitos · ${new Date().toLocaleDateString('pt-BR')}</span></div>`;
 
 const foot = document.getElementById('footer');
@@ -32,6 +31,7 @@ if(foot) foot.outerHTML = `<footer class="site"><div class="wrap">
   <div>
     <nav aria-label="Rodapé">${PAGES.map(([h,l])=>`<a href="${h}">${l}</a>`).join('')}</nav>
     <p>Uma iniciativa da FNP e da Coalizão de Cidades pela Redução de Mortes e Lesões no Trânsito. Fontes: DATASUS, IBGE, SIOPS, IPEA/ANTP.</p>
+    <p class="keyline"><span class="src ok">dado oficial</span> dado oficial <span class="src est">estimativa</span> estimativa</p>
   </div>
 </div></footer>`;
 
