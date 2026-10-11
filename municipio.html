@@ -34,9 +34,8 @@
       <div class="gap-legend">
         <div class="s"><span class="k"><i class="key" style="--c:var(--sus)"></i>Tabela SUS</span><span class="v n" id="vTab"></span></div>
         <div></div>
-        <div class="r"><span class="k"><i class="key h"></i>Estimado além da tabela, fundos de saúde</span><span class="v n" id="vGap"></span></div>
+        <div class="r"><span class="k"><i class="key h"></i>Além da tabela</span><span class="v n" id="vGap"></span></div>
       </div>
-      <div style="margin-top:12px" id="barSrc"></div>
     </div>
   </div></section>
 
@@ -44,16 +43,13 @@
 
   <section class="sec"><div class="wrap">
     <div class="sec-head">
-      <p class="eyebrow">Quem são as vítimas · CID-10, capítulo XX</p>
-      <h2 class="h2">Tipo de vítima internada.</h2>
+      <h2 class="h2">Quem é internado.</h2>
     </div>
     <div id="vit"></div>
-    <div style="margin-top:16px"><span class="src ok">dado oficial · SIH/SUS 2025, causa externa V01–V89</span></div>
   </div></section>
 
   <section class="sec"><div class="wrap">
     <div class="sec-head">
-      <p class="eyebrow">Prevenção</p>
       <h2 class="h2" id="prevTitle">Quanto a cidade economiza.</h2>
     </div>
     <div id="prev"></div>
@@ -61,24 +57,21 @@
 
   <section class="sec" id="cmpSec"><div class="wrap">
     <div class="sec-head">
-      <p class="eyebrow">Na região</p>
       <h2 class="h2" id="cmpTitle">Como a cidade se compara.</h2>
-      <p class="lede">Cada ponto é um dos 20 municípios. A linha tracejada é a mediana da região.</p>
     </div>
     <div class="strips" id="strips"></div>
   </div></section>
 
   <section class="sec"><div class="wrap">
     <div class="sec-head">
-      <p class="eyebrow">A conta completa</p>
       <h2 class="h2">Além do hospital.</h2>
       <p class="lede" id="payLead"></p>
     </div>
     <div class="stack" id="stack" style="height:20px;border-radius:6px" aria-hidden="true"></div>
     <ul class="legend" id="stackLegend" style="margin-top:20px;max-width:620px"></ul>
     <div class="actions no-print">
-      <a class="btn" id="goPay" href="quem-paga.html">Ver a conta detalhada</a>
-      <a class="btn ghost" id="goCalc" href="calculadora.html">Simular casos por diagnóstico</a>
+      <a class="btn" id="goPay" href="quem-paga.html">Quem paga</a>
+      <a class="btn ghost" id="goCalc" href="calculadora.html">Por CID-10</a>
     </div>
   </div></section>
 
@@ -103,7 +96,7 @@ const median=a=>{const s=[...a].sort((x,y)=>x-y),m=s.length>>1;return s.length%2
 const STRIPS=[
   ['internPor100k','Internações','por 100 mil habitantes',v=>F.int(v)],
   ['obitosPor100k','Mortes','por 100 mil habitantes',v=>F.dec(v)],
-  ['leitosAno','Leitos ocupados','o ano inteiro, por 100 mil hab.',v=>F.dec(v,1),c=>c.leitosAno/c.pop*1e5]
+  ['leitosAno','Leitos ocupados','por 100 mil hab.',v=>F.dec(v,1),c=>c.leitosAno/c.pop*1e5]
 ];
 let upd=null, cur=null;
 function current(){const h=location.hash.replace('#','');return M.bySlug[h]?h:'campinas'}
@@ -113,17 +106,15 @@ function render(){
   document.title=c.nome+' · Custo do Trânsito RMC';
   document.getElementById('name').textContent=c.nome;
   UI.tilemap(document.getElementById('mini'),{key:'internPor100k',fmtv:v=>F.int(v),current:c.slug});
-  document.getElementById('lead').innerHTML=`Em ${D.ano}, o SUS pagou <b class="n">${F.money(c.pago)}</b> por <b class="n">${F.int(c.internacoes)}</b> internações de moradores de ${esc(c.nome)} em acidentes de trânsito, ${F.brl(c.pago/c.internacoes)} por internação. O custo estimado de atender essas internações é de ao menos <b class="n">${F.money(c.real)}</b>. O trânsito matou <b class="n">${F.int(c.obitos)}</b> moradores em ${D.anoObitos}.`;
+  document.getElementById('lead').innerHTML=`${F.int(c.internacoes)} internações · ${F.money(c.pago)} pagos pelo SUS · custo de ao menos ${F.money(c.real)}`;
   document.getElementById('bar').innerHTML=UI.gapbar(c.pago,c.real,'anim');
   document.getElementById('vTab').textContent=F.money(c.pago);
   document.getElementById('vGap').textContent=F.money(c.gap);
-  document.getElementById('barSrc').innerHTML=UI.src('pago','pago · SIH/SUS 2025, oficial')+' '+UI.src('custo','estimado · IPEA/ANTP, cenário conservador, margem de ±50%');
   document.getElementById('figs').innerHTML=`
-    <div class="fig"><span class="v n">${F.dec(c.leitosAno,1)}</span><span class="k">leitos ocupados o ano inteiro, ${F.int(c.leitosDia)} dias de internação</span>${UI.src('dias')}</div>
-    <div class="fig"><span class="v" style="color:var(--muted)">n/d</span><span class="k">diárias de UTI, dado ainda não obtido</span><span class="src est">indisponível, não estimado</span></div>
-    <div class="fig"><span class="v n">${F.int(c.internacoes)}</span><span class="k">internações pagas pelo SUS, um piso</span>${UI.src('internacoes')}</div>
-    <div class="fig death"><span class="v n">${F.int(c.obitos)}</span><span class="k">mortes em ${D.anoObitos}, por residência${c.obitosOcorrencia!=null?`. Por local de ocorrência: ${F.int(c.obitosOcorrencia)}`:''}</span>${UI.src('obitos')}</div>`;
-  UI.vitimas(document.getElementById('vit'),c.vitimas);
+    <div class="fig"><span class="v n">${F.lt(c.leitosAno)}</span><span class="k">${c.leitosAno<1.5?'leito ocupado':'leitos ocupados'} o ano todo</span>${UI.src('dias')}</div>
+    <div class="fig"><span class="v n">${F.int(c.internacoes)}</span><span class="k">${c.internacoes===1?'internação':'internações'}</span>${UI.src('internacoes')}</div>
+    <div class="fig death"><span class="v n">${F.int(c.obitos)}</span><span class="k">${c.obitos===1?'morte':'mortes'}</span>${UI.src('obitos')}</div>`;
+  UI.vitimas(document.getElementById('vit'),c.vitimas,null,true);
   document.getElementById('prevTitle').textContent=`Quanto ${c.nome} economiza.`;
   const holder=document.getElementById('prev'); holder.innerHTML='';
   UI.prevencao(holder,c,{nome:c.nome,get:()=>cur});
@@ -136,7 +127,7 @@ function render(){
         <span class="dot me" style="left:${pct(g(c))}%" title="${esc(c.nome)}"></span></div>
       <div class="track-ends"><span>${f(lo)}</span><span>${f(hi)}</span></div></div></div>`}).join('');
   const conta=M.contaCompleta(c,{},false), counted=conta.grupos.filter(g=>!g.excl), pc=g=>g.tot/conta.total*100;
-  document.getElementById('payLead').innerHTML=`O custo hospitalar estimado, <b class="n">${F.money(conta.saude)}</b>, é só uma parte. Somando produção perdida, veículos, poder público e congestionamento, os sinistros de ${esc(c.nome)} custam ao menos <b class="n">${F.money(conta.total)}</b> por ano para a sociedade, ${F.dec(conta.pibShare*100,2)}% do PIB do município. <a href="metodo.html#pib">Por que este número difere dos 3,8% do PIB citados pela FNP?</a>`;
+  document.getElementById('payLead').innerHTML=`Ao menos ${F.money(conta.total)} por ano, ${F.dec(conta.pibShare*100,2)}% do PIB. <a href="metodo.html#pib">E os 3,8% da FNP?</a>`;
   document.getElementById('stack').innerHTML=counted.map(g=>`<i style="width:${pc(g)}%;background:${g.cor}" title="${g.lbl}"></i>`).join('');
   document.getElementById('stackLegend').innerHTML=counted.map(g=>`<li><i class="key${g.id==='gap'?' h':''}" style="--c:${g.cor}"></i><span>${g.lbl}</span><span class="val n">${F.money(g.tot)}</span><span class="pc n">${Math.round(pc(g))}%</span></li>`).join('');
   document.getElementById('goPay').href='quem-paga.html#'+c.slug;

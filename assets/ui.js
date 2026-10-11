@@ -15,7 +15,7 @@ const page = (document.querySelector('[data-page]')||{dataset:{}}).dataset.page;
 const inFrame = (()=>{try{return window.self!==window.top}catch(e){return true}})();
 
 function bannerText(){
-  return 'Versão para revisão. Mortes, internações, valores da tabela, despesas e população são dados oficiais. O custo além da tabela é uma estimativa com base no IPEA/ANTP.';
+  return 'Versão para revisão · <span class="src ok">dado oficial</span> <span class="src est">estimativa</span>';
 }
 
 const nav = document.getElementById('nav');
@@ -23,7 +23,7 @@ if(nav) nav.outerHTML = `<header class="nav"><div class="wrap">
   <a class="brand" href="index.html"><i aria-hidden="true"></i>Custo do Trânsito <span>RMC</span></a>
   <nav class="links" aria-label="Páginas">${PAGES.map(([h,l,id])=>`<a href="${h}"${id===page?' aria-current="page"':''}>${l}</a>`).join('')}</nav>
 </div></header>
-${`<div class="strip"><div class="wrap"><i aria-hidden="true"></i><span>${bannerText()} <a href="metodo.html#fontes">Ver status das fontes</a></span></div></div>`}
+${`<div class="strip"><div class="wrap"><i aria-hidden="true"></i><span>${bannerText()} <a href="metodo.html#fontes">Fontes</a></span></div></div>`}
 <div class="print-only wrap"><span class="logo-plate"><img src="assets/fnp.png" alt="FNP" width="187" height="69"></span><span>Custo do Trânsito RMC · Frente Nacional de Prefeitas e Prefeitos · ${new Date().toLocaleDateString('pt-BR')}</span></div>`;
 
 const foot = document.getElementById('footer');
@@ -31,7 +31,7 @@ if(foot) foot.outerHTML = `<footer class="site"><div class="wrap">
   <span class="logo-plate"><img src="assets/fnp.png" alt="Frente Nacional de Prefeitas e Prefeitos (FNP)" width="187" height="69"></span>
   <div>
     <nav aria-label="Rodapé">${PAGES.map(([h,l])=>`<a href="${h}">${l}</a>`).join('')}</nav>
-    <p>Custo do Trânsito RMC, uma iniciativa da Frente Nacional de Prefeitas e Prefeitos (FNP) e da Coalizão de Cidades pela Redução de Mortes e Lesões no Trânsito, com piloto nos 20 municípios da Região Metropolitana de Campinas. Ano-base ${D.ano}. Fontes: DATASUS (SIM, SIH, SIGTAP), SIOPS, IBGE, metodologia IPEA e ANTP. O custo além da tabela é estimativa.</p>
+    <p>Uma iniciativa da FNP e da Coalizão de Cidades pela Redução de Mortes e Lesões no Trânsito. Fontes: DATASUS, IBGE, SIOPS, IPEA/ANTP.</p>
   </div>
 </div></footer>`;
 
@@ -45,6 +45,13 @@ const SRC = {
   custo:['est','estimativa · IPEA/ANTP corrigido pelo IPCA'], siops:['ok','dado oficial · SIOPS 2025']
 };
 function src(field, label){ const x=SRC[field]||['est',label||'estimativa']; return `<span class="src ${x[0]}">${label||x[1]}</span>`; }
+/* Uma marca só: ● oficial, ○ estimativa. O texto da fonte vira dica ao tocar ou passar o mouse. */
+function dots(root){
+  (root||document).querySelectorAll('.src:not([data-d])').forEach(e=>{
+    const t=e.textContent.trim(); e.dataset.d=1; e.dataset.tip=t; e.setAttribute('tabindex','0'); e.setAttribute('role','img'); e.setAttribute('aria-label',t);
+    if(!e.closest('.strip')) e.textContent=''; });
+}
+new MutationObserver(()=>dots()).observe(document.documentElement,{childList:true,subtree:true}); dots();
 
 /* Abreviações curtas para os quadrados do mapa */
 const SHORT = {'santa-barbara-doeste':'S. Bárbara','santo-antonio-de-posse':'S. A. Posse','engenheiro-coelho':'Eng. Coelho','artur-nogueira':'A. Nogueira','nova-odessa':'N. Odessa','monte-mor':'Monte Mor'};
@@ -70,10 +77,11 @@ function gapbar(tab, real, cls){
 }
 
 /* Barra de tipos de vítima (CID-10 V01–V89). grupos: lista de {nome,cid,cor,n,share}. */
-function vitimas(el, grupos, label){
+function vitimas(el, grupos, label, compact){
   const T=grupos.filter(v=>v.n>0);
   el.innerHTML = `<div class="vbar" aria-hidden="true">${T.map(v=>`<i style="flex:${v.share} 1 0;background:${v.cor}">${v.share>=.1?Math.round(v.share*100)+'%':''}</i>`).join('')}</div>
-  <div class="vlist">${grupos.map(v=>`<div style="--c:${v.cor}"><b class="n">${Math.round(v.share*100)}%</b><span>${v.nome}, ${F.int(v.n)} ${label||'internações'}</span><span class="km">${v.cid}</span></div>`).join('')}</div>`;
+  ${compact?`<div class="vkey">${grupos.filter(v=>v.n>0).map(v=>`<span title="${esc(v.cid)}"><i style="background:${v.cor}"></i>${v.nome}</span>`).join('')}</div>`:''}
+  <div class="vlist"${compact?' hidden':''}>${grupos.map(v=>`<div style="--c:${v.cor}"><b class="n">${Math.round(v.share*100)}%</b><span>${v.nome}, ${F.int(v.n)} ${label||'internações'}</span><span class="km">${v.cid}</span></div>`).join('')}</div>`;
 }
 
 /* Bloco de prevenção: slider de redução e economia resultante */
@@ -85,20 +93,16 @@ function prevencao(el, t, opt){
       <label for="${id}">Se ${esc(opt.nome||'a região')} reduzir mortes e internações em</label>
       <output for="${id}" id="${id}_o" class="n">20%</output>
       <input type="range" id="${id}" min="5" max="60" step="5" value="${opt.pct||20}">
-      <div class="levers" aria-label="Principais alavancas"><span>Velocidade</span><span>Álcool</span><span>Motociclistas</span><span>Pontos críticos</span></div>
-      <p class="small" style="margin-top:6px">${D.fatos.alcool.txt} (${D.fatos.alcool.fonte}).</p>
     </div>
-    <div><div class="saves" id="${id}_s"></div><p class="small" style="margin-top:12px">Simulação sobre as estimativas desta página. A economia na saúde usa o custo estimado por internado, cenário conservador.</p></div>
+    <div><div class="saves" id="${id}_s"></div></div>
   </div>`;
   const inp=document.getElementById(id);
   function upd(){
     const p=inp.value/100, e=M.economia(opt.get?opt.get():t,p);
     document.getElementById(id+'_o').textContent=inp.value+'%';
     document.getElementById(id+'_s').innerHTML=`
-      <div><b class="n">${F.money(e.saude)}</b><span>a menos por ano na conta da saúde</span></div>
-      <div><b class="n">${F.int(e.leitosDia)}</b><span>leitos-dia liberados, como ${F.dec(e.leitos)} leitos ocupados o ano inteiro</span></div>
-      <div><b class="n">${F.int(e.internacoes)}</b><span>internações e ${F.int(e.obitos)} mortes a menos por ano</span></div>
-      <div><b class="n">${F.money(e.total)}</b><span>a menos para a sociedade, no piso estimado</span></div>`;
+      <div><b class="n">${F.money(e.saude)}</b><span>a menos por ano na saúde ${src('custo')}</span></div>
+      <div><b class="n">${F.int(e.leitosDia)}</b><span>leitos-dia livres</span></div>`;
   }
   inp.addEventListener('input',upd); upd();
   return upd;

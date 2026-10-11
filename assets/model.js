@@ -18,7 +18,9 @@ const fmt={
   r2:v=>'R$ '+v.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2}),
   r0:v=>'R$ '+Math.round(v).toLocaleString('pt-BR'),
   dec:(v,d=1)=>v.toLocaleString('pt-BR',{minimumFractionDigits:d,maximumFractionDigits:d}),
-  pct:v=>Math.round(v*100)+'%'
+  pct:v=>Math.round(v*100)+'%',
+  lt:v=>v>=10?new Intl.NumberFormat('pt-BR').format(Math.round(v)):v.toLocaleString('pt-BR',{maximumFractionDigits:1}),
+  pl:(n,s,p)=>{const r=Math.round(n);return r.toLocaleString('pt-BR')+' '+(r===1?s:p)}
 };
 
 /* Média da RMC, usada só quando quem digita não informa o valor pago ou os dias de internação. */

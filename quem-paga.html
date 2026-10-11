@@ -15,33 +15,32 @@
 <div id="nav"></div>
 <main>
   <section class="hero"><div class="wrap">
-    <p class="eyebrow">Quem paga a conta</p>
-    <h1 class="display" style="margin-top:18px;font-size:clamp(40px,6vw,80px);max-width:15ch">Primeiro a saúde. Depois todo o resto.</h1>
-    <p class="lede">O hospital é o primeiro pagador. Em seguida vêm as famílias, os donos de veículos, o poder público fora da saúde e quem fica parado no trânsito. Esta página soma tudo a partir das mortes e internações oficiais.</p>
+        <h1 class="display" style="margin-top:18px;font-size:clamp(40px,6vw,80px);max-width:15ch">Primeiro a saúde. Depois o resto.</h1>
+    <p class="lede">Fatores por vítima: IPEA/ANTP 2003. Mortes e internações: dados oficiais.</p>
     <div class="picker" style="margin-top:36px">
       <label class="sr" for="terr">Território</label>
       <select id="terr"></select>
-      <label class="chk"><input type="checkbox" id="inss"> <span>Incluir benefícios do INSS no total</span></label>
+      <label class="chk"><input type="checkbox" id="inss"> <span>Incluir o INSS</span></label>
     </div>
   </div></section>
 
   <section class="sec-tight"><div class="wrap">
     <div class="total-card">
       <div>
-        <p class="eyebrow" id="sLabel">Conta da saúde, estimada</p>
+        <p class="eyebrow" id="sLabel">Saúde, estimada</p>
         <p class="v n" id="saude" style="font-family:var(--display);font-size:clamp(40px,5.4vw,72px);font-weight:800;letter-spacing:-.045em;line-height:1"></p>
         <p class="small" id="saudeSub" style="margin-top:10px;max-width:46ch"></p>
       </div>
       <div style="text-align:right">
-        <p class="eyebrow" id="tLabel">Custo total para a sociedade, piso</p>
+        <p class="eyebrow" id="tLabel">Para a sociedade, piso</p>
         <p class="v n" id="total"></p>
         <p class="small" id="tSub" style="margin-top:10px"></p>
       </div>
     </div>
     <div class="payroad" id="payroad" aria-hidden="true"></div>
-    <p class="small" style="margin-bottom:64px">A largura de cada bloco é a parte de cada pagador no total.</p>
+    <div style="margin-bottom:48px"></div>
     <div class="groups" id="groups"></div>
-    <p class="small" style="margin-top:48px;max-width:70ch">O INSS fica fora do total por padrão: auxílios e pensões são transferências de renda, e somá-los à produção perdida contaria a mesma perda duas vezes. O total é um piso porque só conta internações pagas pelo SUS e mortes registradas. Premissas e fontes estão em <a href="metodo.html">Método e fontes</a>, e a comparação com os 3,8% do PIB citados pela FNP em <a href="metodo.html#pib">Por que o total difere</a>.</p>
+    <p class="small" style="margin-top:40px">INSS fora do total (é transferência). O total é um piso. <a href="metodo.html">Método</a> · <a href="metodo.html#pib">E os 3,8% da FNP?</a></p>
   </div></section>
 </main>
 <div id="footer"></div>
@@ -62,18 +61,16 @@ function render(){
   terr.value=t.slug;
   const c=M.contaCompleta(t,inss.checked), counted=c.grupos.filter(g=>!g.excl), pc=g=>g.tot/c.total*100;
   const nome=t.slug==='rmc'?'20 municípios':t.nome;
-  document.getElementById('sLabel').textContent=`Conta da saúde, estimada · ${nome}`;
+  document.getElementById('sLabel').textContent=`Saúde, estimada · ${nome}`;
   document.getElementById('saude').textContent=F.money(t.real);
-  document.getElementById('saudeSub').innerHTML=`O SUS pagou ${F.money(t.pago)} (oficial). O restante, ${F.money(t.gap)}, é estimativa que sai dos fundos de saúde. ${UI.src('custo','IPEA/ANTP, cenário conservador')}`;
-  document.getElementById('tLabel').textContent=`Custo total para a sociedade, piso`;
-  document.getElementById('total').textContent=F.money(c.total);
-  document.getElementById('tSub').textContent=`${F.int(t.obitos)} mortes e ${F.int(t.internacoes)} internações. Equivale a ${F.dec(c.pibShare*100,2)}% do PIB.`;
+  document.getElementById('saudeSub').innerHTML=`SUS pagou ${F.money(t.pago)} ${UI.src('pago','SIH/SUS 2025, valor oficial')} · além da tabela ${F.money(t.gap)} ${UI.src('custo','IPEA/ANTP, cenário conservador')}`;
+    document.getElementById('total').textContent=F.money(c.total);
+  document.getElementById('tSub').textContent=`${F.pl(t.obitos,'morte','mortes')} · ${F.pl(t.internacoes,'internação','internações')} · ${F.dec(c.pibShare*100,2)}% do PIB`;
   document.getElementById('payroad').innerHTML=counted.map(g=>`<i style="flex:${Math.max(pc(g),.01)} 1 0;background:${g.cor};color:${INK[g.id]}">${pc(g)>=9?`<span class="n"${g.id==='gap'?' style="background:var(--sign);padding:2px 8px;border-radius:6px"':''}>${g.lbl} ${Math.round(pc(g))}%</span>`:''}</i>`).join('');
-  document.getElementById('groups').innerHTML=c.grupos.map(g=>`<article class="grp${g.excl?' excl':''}">
-    <div class="grp-top"><i style="--c:${g.cor}"></i><span>${g.lbl}</span></div>
-    <b class="grp-tot n">${F.money(g.tot)}</b>
-    <p class="who">${g.who}${g.excl?'. Fora do total.':''}</p>
-    <div>${g.items.map(x=>`<div class="item"><span>${x.lbl}</span><span class="val n">${F.money(x.val)}</span><span class="d">${x.d}</span></div>`).join('')}</div></article>`).join('');
+  document.getElementById('groups').innerHTML=c.grupos.map(g=>`<details class="grp${g.excl?' excl':''}">
+    <summary><span class="grp-top"><i style="--c:${g.cor}"></i><span>${g.lbl}${g.excl?' · fora do total':''}</span></span><b class="grp-tot n">${F.money(g.tot)}</b></summary>
+    <p class="who">${g.who}</p>
+    <div>${g.items.map(x=>`<div class="item"><span>${x.lbl}</span><span class="val n">${F.money(x.val)}</span></div>`).join('')}</div></details>`).join('');
 }
 terr.addEventListener('change',()=>{location.hash=terr.value});
 inss.addEventListener('change',render);

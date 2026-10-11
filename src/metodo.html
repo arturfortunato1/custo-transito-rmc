@@ -8,15 +8,19 @@
 <div id="nav"></div>
 <main>
   <section class="hero"><div class="wrap">
-    <p class="eyebrow">Método e fontes</p>
-    <h1 class="display" style="margin-top:18px;font-size:clamp(40px,6vw,80px);max-width:14ch">Como calculamos cada número.</h1>
-    <p class="lede">Cada número do site é dado oficial ou estimativa, e a etiqueta ao lado dele diz qual. Quem discordar de uma premissa pode mudá-la na calculadora e ver o efeito.</p>
+    <h1 class="display" style="margin-top:18px;font-size:clamp(40px,6vw,80px);max-width:14ch">Como calculamos.</h1>
+    <div class="notice" style="margin-top:28px;max-width:640px;display:block"><p class="eyebrow" style="margin-bottom:10px">Em 1 minuto</p>
+      <ul class="min">
+        <li><b>Oficial:</b> mortes (SIM), internações e valores pagos (SIH), população, PIB e gastos de saúde.</li>
+        <li><b>Estimativa:</b> o custo além da tabela e os demais custos, do IPEA/ANTP, com margem de ±50%.</li>
+        <li><b>Piso:</b> só entram internações do SUS e mortes registradas.</li>
+        <li><b>3,8% do PIB:</b> não achamos o método da FNP; o nosso é mais restrito.</li>
+      </ul></div>
   </div></section>
 
   <section class="sec-tight" id="fontes"><div class="wrap">
     <div class="sec-head">
-      <p class="eyebrow">Fontes</p>
-      <h2 class="h2" style="font-size:clamp(28px,3.4vw,40px)">O que é oficial e o que é estimativa.</h2>
+      <h2 class="h2" style="font-size:clamp(28px,3.4vw,40px)">Fontes</h2>
     </div>
     <div class="src-wrap"><table class="src-table">
       <thead><tr><th>Base</th><th>Para que usamos</th><th>Status</th></tr></thead>
@@ -84,6 +88,10 @@ document.getElementById('ref').innerHTML=`<thead><tr><th>Referência</th><th>Pre
  ['ipea03_hosp_internado_moderado','ipea03_hosp_internado_medio','ipea03_hosp_internado_grave','ipea03_vitima_morte','ipea03_vitima_ferido'].map(id=>{const r=ip(id);return `<tr><td>${esc(r.parametro)}<br><span class="small">${esc(r.estudo)}, ${esc(r.unidade)}</span></td><td class="n">${num(r.valor_original)}<br><span class="small">${esc(r.data_preco_original)}</span></td><td class="n"><b>${num(r.valor_dez2025)}</b></td></tr>`}).join('')+'</tbody>';
 document.getElementById('comp').innerHTML=`<thead><tr><th>Componente do custo por vítima, IPEA/ANTP 2003</th><th>Participação</th></tr></thead><tbody>`+D.composicao.map(r=>`<tr><td>${esc(r.componente)}</td><td class="n">${(+r.participacao_pct).toLocaleString('pt-BR')}%</td></tr>`).join('')+'</tbody>';
 document.getElementById('sigtap').innerHTML=`<thead><tr><th>Procedimento</th><th>Total hospitalar</th><th>Permanência</th></tr></thead><tbody>`+D.sigtap.filter(r=>+r.total_hospitalar_rs>0).map(r=>`<tr><td><a href="${r.url}" target="_blank" rel="noopener">${esc(r.procedimento.toLowerCase())}</a><br><span class="small">${r.codigo}</span></td><td class="n">${F.brl(+r.total_hospitalar_rs)}</td><td class="n">${r.media_permanencia_dias?r.media_permanencia_dias+' dias':'–'}</td></tr>`).join('')+'</tbody>';
+const pr=document.querySelector('.prose'); let d=null;
+[...pr.children].forEach(k=>{ if(k.tagName==='H3'){ d=document.createElement('details'); d.className='acc'; if(k.id) d.id=k.id; const sm=document.createElement('summary'); sm.textContent=k.textContent; pr.insertBefore(d,k); k.remove(); d.appendChild(sm); } else if(d){ d.appendChild(k); } });
+function openHash(){ const t=document.getElementById(location.hash.slice(1)); if(t&&t.tagName==='DETAILS'){ t.open=true; t.scrollIntoView(); } }
+addEventListener('hashchange',openHash); openHash();
 })();
 </script>
 </body>

@@ -15,9 +15,8 @@
 <div id="nav"></div>
 <main>
   <section class="hero" style="padding-top:64px"><div class="wrap">
-    <p class="eyebrow">Calculadora por diagnóstico</p>
-    <h1 class="display" style="margin-top:18px;font-size:clamp(40px,6vw,80px);max-width:14ch">Quanto custa cada internação.</h1>
-    <p class="lede">Escolha o diagnóstico da lesão (CID-10, capítulos S e T), a causa (V01 a V89) e quantos pacientes foram internados. A calculadora mostra o valor pago pela tabela SUS, o custo hospitalar estimado e os leitos ocupados. Se você tem os dias de UTI do seu hospital, informe: esse dado não existe nas bases públicas que usamos.</p>
+        <h1 class="display" style="margin-top:18px;font-size:clamp(40px,6vw,80px);max-width:14ch">Quanto custa cada internação.</h1>
+    <p class="lede">Escolha o diagnóstico, a causa e o número de internados.</p>
   </div></section>
 
   <section class="sec-tight"><div class="wrap">
@@ -25,55 +24,50 @@
       <div class="work">
         <div class="fld">
           <label for="cidSearch">Adicionar diagnóstico</label>
-          <input type="search" id="cidSearch" placeholder="Código ou nome, por exemplo S72, fêmur, baço" autocomplete="off" role="combobox" aria-expanded="false" aria-controls="cidList">
+          <input type="search" id="cidSearch" placeholder="CID-10 ou nome: S72, fêmur" autocomplete="off" role="combobox" aria-expanded="false" aria-controls="cidList">
           <ul class="results" id="cidList" role="listbox" hidden></ul>
         </div>
         <div class="chips" id="chips" aria-label="Diagnósticos frequentes em vítimas de trânsito"></div>
         <div>
-          <div class="cid-head" aria-hidden="true"><span>CID-10</span><span>Diagnóstico e causa</span><span>Internados</span><span>Óbitos hospitalares</span><span>Dias de UTI</span><span></span></div>
+          <div class="cid-head" aria-hidden="true"><span>CID-10</span><span>Diagnóstico e causa</span><span>Internados</span><span>Óbitos hospitalares</span><span title="Do seu hospital. Não é público.">Dias de UTI</span><span></span></div>
           <ol class="cids" id="cidRows"></ol>
           <div class="cid-foot" id="cidFoot"></div>
         </div>
         <details class="params">
           <summary>Avançado</summary>
+          <div class="compo"><h3 class="h3" style="font-size:17px">Por tipo de vítima</h3><ul class="legend" id="byType"></ul></div>
+          <p class="small" style="margin-bottom:16px">Valores de tabela: SIGTAP 12/2025. A classe moderado ou grave é do site. Estimativas, ±50%.</p>
           <div class="pgrid" style="grid-template-columns:repeat(2,minmax(0,1fr))">
             <label class="fld"><span class="lab">Referência de custo hospitalar</span>
-              <select id="cenario"><option value="conservador">Conservadora: moderado ou grave, por diagnóstico</option><option value="medio">Média do IPEA/ANTP para todos</option></select>
-              <span class="hint">Define o custo estimado por internado. A conservadora usa o valor de um internado moderado ou grave do estudo do IPEA/ANTP, corrigido pelo IPCA.</span></label>
+              <select id="cenario"><option value="conservador">Conservadora</option><option value="medio">Média</option></select>
+              <span class="hint">Custo por internado, IPEA/ANTP.</span></label>
             <label class="fld"><span class="lab">Diária de UTI na tabela SUS (R$)</span>
               <input type="number" id="pUti" min="0" step="10">
-              <span class="hint">SIGTAP, UTI adulto II, competência 12/2025.</span></label>
+              <span class="hint">SIGTAP 12/2025</span></label>
           </div>
         </details>
       </div>
 
       <aside class="side">
         <div class="result" aria-live="polite">
-          <p class="k">Simulação</p>
-          <div class="vs">
-            <div><span class="k">Pago pela tabela SUS</span><span class="v n" id="vSus"></span></div>
-            <div><span class="k">Custo hospitalar estimado</span><span class="v n" id="vReal"></span></div>
+                    <div class="vs">
+            <div><span class="k">Tabela SUS</span><span class="v n" id="vSus"></span></div>
+            <div><span class="k">Custo estimado</span><span class="v n" id="vReal"></span></div>
           </div>
           <div id="cmp"></div>
           <p id="gapLine" style="font-size:15px;line-height:1.45"></p>
           <div class="load">
             <div><b class="n" id="lLeitos"></b><span>leitos-dia</span></div>
-            <div><b class="n" id="lAno"></b><span>leitos o ano inteiro</span></div>
-            <div><b class="n" id="lUti"></b><span>diárias de UTI informadas</span></div>
+            <div><b class="n" id="lAno"></b><span>leitos o ano todo</span></div>
           </div>
           <div class="tot">
-            <span class="k">Custo para a sociedade, piso</span>
+            <span class="k">Para a sociedade, piso</span>
             <span class="v n" id="tTotal"></span>
             <span class="k" id="tSub"></span>
           </div>
         </div>
-        <div class="compo">
-          <h3 class="h3" style="font-size:17px">Por tipo de vítima</h3>
-          <ul class="legend" id="byType"></ul>
-        </div>
       </aside>
     </div>
-    <p class="small" style="margin-top:40px;max-width:72ch">Os valores de tabela são os procedimentos do SIGTAP (competência 12/2025) mais próximos de cada diagnóstico. A classificação em moderado ou grave é do site e define qual referência de custo do IPEA/ANTP se aplica. Os resultados são estimativas, com margem de ±50% no estudo original, e não substituem o custo apurado pelo seu hospital.</p>
   </div></section>
 </main>
 <div id="footer"></div>
@@ -103,22 +97,22 @@ function stepper(k,i,v,cid,label,cls){
 
 function renderLines(R){
   const box=document.getElementById('cidRows'),foot=document.getElementById('cidFoot');
-  if(!lines.length){box.innerHTML=`<li class="empty">A simulação está vazia. Busque um diagnóstico pelo código ou nome, ou escolha um dos frequentes acima.</li>`;foot.innerHTML='';return;}
+  if(!lines.length){box.innerHTML=`<li class="empty">Adicione um diagnóstico acima.</li>`;foot.innerHTML='';return;}
   const maxReal=Math.max(...R.rows.map(r=>r.real),1);
   box.innerHTML=lines.map((l,i)=>{const c=BYCID[l.cid],r=R.rows[i],isOpen=open.has(l.cid);
     const w=r.real/maxReal*100;
     return `<li class="cr${isOpen?' open':''}">
       <span class="km">${c.cid}</span>
       <div class="dx"><button type="button" class="dx-btn" data-open="${c.cid}" aria-expanded="${isOpen}">${esc(c.nome)}${ARROW}</button>
-        <small>${esc(c.grupo)}, <span class="n">${F.brl(c.tabela)}</span> por internação na tabela</small>
-        <label class="small" style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">Causa: <select class="vsel" data-i="${i}" data-k="tipo" aria-label="Tipo de vítima ${c.cid}">${TIPOS.map(t=>`<option value="${t.id}"${t.id===l.tipo?' selected':''}>${t.nome} (${t.cid})</option>`).join('')}</select></label></div>
+        <small>${esc(c.grupo)} · tabela <span class="n">${F.brl(c.tabela)}</span></small>
+        <label class="small" style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">Causa: <select class="vsel" data-i="${i}" data-k="tipo" aria-label="Tipo de vítima ${c.cid}">${TIPOS.map(t=>`<option value="${t.id}"${t.id===l.tipo?' selected':''}>${t.nome}</option>`).join('')}</select></label></div>
       ${stepper('n',i,l.n,c.cid,'Internados','qa')}
       ${stepper('o',i,l.o,c.cid,'Óbitos hospitalares','qo')}
       ${stepper('uti',i,l.uti,c.cid,'Dias de UTI','qu')}
       <button type="button" class="rm" data-rm="${i}" aria-label="Remover ${c.cid}">${XICON}</button>
       <div class="gap">
         <div style="width:${Math.max(w,3)}%">${UI.gapbar(r.tab,r.real,'sm')}</div>
-        <div class="glab"><span class="s">Tabela SUS <b class="n">${money(r.tab)}</b></span><span>Estimado <b class="n">${money(r.real)}</b></span><span><b class="n">${F.dec(r.leitosDia,0)}</b> leitos-dia</span></div>
+        <div class="glab"><span class="s">Tabela SUS <b class="n">${money(r.tab)}</b></span><span>Custo <b class="n">${money(r.real)}</b></span><span><b class="n">${F.dec(r.leitosDia,0)}</b> leitos-dia</span></div>
       </div>
       ${isOpen?`<div class="det">
         <p><b>Procedimento do SIGTAP.</b> ${esc(c.linha.toLowerCase())}, código <a href="${c.url}" target="_blank" rel="noopener">${c.codigo}</a>. Permanência média de ${c.permanencia} dias.</p>
@@ -130,7 +124,7 @@ function renderLines(R){
         <p>A classe ${c.classe==='grave'?'grave':'moderada'} é uma escolha do site para este diagnóstico. Referência de custo: ${F.brl(c.custo)} por internado ${c.classe==='grave'?'grave':'moderado'} (IPEA/ANTP, dez/2025).</p>
       </div>`:''}
     </li>`}).join('');
-  foot.innerHTML=`<span><b class="n">${INT(R.n)}</b> internados</span><span><b class="n">${INT(R.o)}</b> óbitos</span><span><b class="n" style="color:var(--sus)">${money(R.tab)}</b> na tabela</span><span><b class="n">${money(R.real)}</b> estimado</span>`;
+  foot.innerHTML=`<span><b class="n">${INT(R.n)}</b> internados</span><span><b class="n">${INT(R.o)}</b> ${R.o===1?'óbito':'óbitos'}</span><span><b class="n" style="color:var(--sus)">${money(R.tab)}</b> na tabela</span><span><b class="n">${money(R.real)}</b> estimado</span>`;
 }
 
 function calc(){
@@ -150,12 +144,11 @@ function calc(){
   document.getElementById('vSus').textContent=money(R.tab);
   document.getElementById('vReal').textContent=money(R.real);
   document.getElementById('cmp').innerHTML=UI.gapbar(R.tab,R.real,'sm');
-  document.getElementById('gapLine').innerHTML=R.tab?`Prefeitura e estado completam, em estimativa, <b class="n">${money(R.real-R.tab)}</b>. O custo estimado é <b class="n">${F.x0(R.real/R.tab)}</b> o valor pago pela tabela.`:'Adicione um diagnóstico para simular.';
+  document.getElementById('gapLine').innerHTML=R.tab?`<b class="n">${F.x0(R.real/R.tab)}</b> o valor da tabela. A tabela paga o procedimento; o custo por internado vem do IPEA.`:'Adicione um diagnóstico para simular.';
   document.getElementById('lLeitos').textContent=INT(R.leitosDia);
-  document.getElementById('lAno').textContent=F.dec(R.leitosDia/365,1);
-  document.getElementById('lUti').textContent=R.utiDias>0?INT(R.utiDias):'n/d';
-  document.getElementById('tTotal').textContent=money(R.real+R.B*(1-SAUDE_SHARE));
-  document.getElementById('tSub').textContent=`${INT(R.n)} internados e ${INT(R.o)} óbitos hospitalares. Hospital estimado mais o resto do custo por vítima do IPEA/ANTP.`;
+  document.getElementById('lAno').textContent=F.lt(R.leitosDia/365);
+    document.getElementById('tTotal').textContent=money(R.real+R.B*(1-SAUDE_SHARE));
+  document.getElementById('tSub').textContent=`${F.pl(R.n,'internado','internados')}, ${F.pl(R.o,'óbito','óbitos')}`;
   const tot=R.n||1;
   document.getElementById('byType').innerHTML=TIPOS.map(t=>{const n=porTipo[t.id]||0;return `<li style="grid-template-columns:auto minmax(0,1fr) auto 44px"><i class="key" style="--c:${t.cor}"></i><span>${t.nome}</span><span class="val n">${INT(n)} internados</span><span class="pc n">${Math.round(n/tot*100)}%</span></li>`}).join('');
 }
@@ -180,7 +173,7 @@ const search=document.getElementById('cidSearch'),list=document.getElementById('
 function showList(){const q=norm(search.value.trim());
   if(!q){list.hidden=true;search.setAttribute('aria-expanded','false');return;}
   hits=CIDS.filter(c=>norm(c.cid+' '+c.nome+' '+c.grupo+' '+c.linha).includes(q)||norm(c.cid).replace('.','').startsWith(q.replace('.',''))).slice(0,8);act=0;
-  list.innerHTML=hits.length?hits.map((c,i)=>`<li role="option" id="opt${i}" data-cid="${c.cid}" aria-selected="${i===0}"><span class="km">${c.cid}</span><span>${esc(c.nome)}<small>${esc(c.grupo)}</small></span></li>`).join(''):`<li class="none">Nenhum diagnóstico com esse termo. A lista cobre ${CIDS.length} lesões frequentes em vítimas de trânsito, as que têm procedimento correspondente no SIGTAP.</li>`;
+  list.innerHTML=hits.length?hits.map((c,i)=>`<li role="option" id="opt${i}" data-cid="${c.cid}" aria-selected="${i===0}"><span class="km">${c.cid}</span><span>${esc(c.nome)}<small>${esc(c.grupo)}</small></span></li>`).join(''):`<li class="none">Nenhum resultado. A lista tem ${CIDS.length} lesões frequentes.</li>`;
   list.hidden=false;search.setAttribute('aria-expanded','true');}
 function pick(cid){addCid(cid);search.value='';list.hidden=true;search.setAttribute('aria-expanded','false');}
 search.addEventListener('input',showList);
