@@ -71,12 +71,13 @@ button{font:inherit;color:inherit}
 .mark-gap b{background:var(--sign);padding:0 .1em;border-radius:.08em}
 
 /* Seções */
-.sec{padding-block:112px 0}
-.sec-tight{padding-block:72px 0}
+:root{--sp:clamp(48px,8vw,96px)}
+.sec{padding-block:var(--sp) 0}
+.sec-tight{padding-block:calc(var(--sp)*.65) 0}
 .sec-head{display:grid;gap:18px;margin-bottom:44px;max-width:860px}
-.hero{padding-block:88px 0}
+.hero{padding-block:calc(var(--sp)*.9) 0}
 .hero .lede{margin-top:28px}
-@media (max-width:560px){.sec{padding-block:80px 0}.hero{padding-block:56px 0}}
+
 
 /* Barra da conta: azul pago pela tabela, zebrado sem cobertura */
 .gapbar{display:flex;height:var(--h,88px);border-radius:18px;overflow:hidden;background:var(--bg-2)}
@@ -313,7 +314,7 @@ details.params summary{cursor:pointer;font-weight:650}
 .pill.wait span{background:var(--sign);padding:0 4px;border-radius:4px}
 
 /* Rodapé */
-footer.site{margin-top:140px;border-top:1px solid var(--line);background:var(--bg-2)}
+footer.site{margin-top:0;border-top:1px solid var(--line);background:var(--bg-2)}
 footer.site .wrap{padding-block:40px 56px;display:grid;grid-template-columns:auto minmax(0,1fr);gap:28px 40px;align-items:start}
 @media (max-width:640px){footer.site .wrap{grid-template-columns:minmax(0,1fr)}}
 .logo-plate{background:#ffffff;border-radius:12px;padding:10px 14px;display:inline-block}
@@ -580,3 +581,13 @@ input[type=range]::-moz-range-thumb{width:28px;height:28px}
 .hero.dark .mark-gap{color:#16130a}
 .band{background:var(--bg-2)}
 .sec.dark{background:var(--bg)}
+
+/* Ritmo vertical: uma medida (--sp) acima e abaixo de cada faixa, e antes do rodapé */
+.sec.band,.sec.dark{padding-block:var(--sp)}
+main>section:has(+.band),main>section:has(+.dark){padding-bottom:var(--sp)}
+main>section:last-child{padding-bottom:var(--sp)}
+.sec.band+.sec.band{padding-top:0}
+.sec-head{margin-bottom:calc(var(--sp)*.4)}
+@media print{main>section{padding-block:10px 0!important}}
+.dx{min-width:0}.dx-btn{overflow-wrap:anywhere}
+@media (min-width:1101px){.cid-head,.cr{grid-template-columns:72px minmax(0,1fr) 104px 104px 104px 32px;column-gap:12px}.cr .step{grid-template-columns:32px minmax(0,1fr) 32px}.cr .step button{min-width:32px}}
