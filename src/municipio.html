@@ -20,7 +20,7 @@
     </div>
 
       </div>
-      <div class="no-print"><div class="tilemap mini" id="mini" aria-hidden="true"></div><p class="small" style="margin-top:8px">na região</p></div>
+      <div class="no-print miniwrap"><div class="tilemap mini" id="mini" aria-hidden="true"></div><p class="small" style="margin-top:8px">na região</p></div>
     </div>
     <p class="lede" id="lead" style="margin-top:28px;max-width:40em"></p>
 
@@ -107,9 +107,9 @@ function render(){
   document.getElementById('vTab').textContent=F.money(c.pago);
   document.getElementById('vGap').textContent=F.money(c.gap);
   document.getElementById('figs').innerHTML=`
-    <div class="fig"><span class="v n">${F.lt(c.leitosAno)}</span><span class="k">${c.leitosAno<1.5?'leito ocupado':'leitos ocupados'} o ano todo</span>${UI.src('dias')}</div>
-    <div class="fig"><span class="v n">${F.int(c.internacoes)}</span><span class="k">${c.internacoes===1?'internação':'internações'}</span>${UI.src('internacoes')}</div>
-    <div class="fig death"><span class="v n">${F.int(c.obitos)}</span><span class="k">${c.obitos===1?'morte':'mortes'}</span>${UI.src('obitos')}</div>`;
+    <div class="fig"><span class="v n">${F.lt(c.leitosAno)}</span><span class="k">${c.leitosAno<1.5?'leito ocupado':'leitos ocupados'} o ano todo ${UI.src('dias')}</span></div>
+    <div class="fig"><span class="v n">${F.int(c.internacoes)}</span><span class="k">${c.internacoes===1?'internação':'internações'} ${UI.src('internacoes')}</span></div>
+    <div class="fig death"><span class="v n">${F.int(c.obitos)}</span><span class="k">${c.obitos===1?'morte':'mortes'} ${UI.src('obitos')}</span></div>`;
   UI.vitimas(document.getElementById('vit'),c.vitimas,null,true);
   document.getElementById('prevTitle').textContent=`Quanto ${c.nome} economiza.`;
   const holder=document.getElementById('prev'); holder.innerHTML='';

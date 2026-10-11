@@ -56,6 +56,7 @@ new MutationObserver(()=>dots()).observe(document.documentElement,{childList:tru
 /* Abreviações curtas para os quadrados do mapa */
 const SHORT = {'santa-barbara-doeste':'S. Bárbara','santo-antonio-de-posse':'S. A. Posse','engenheiro-coelho':'Eng. Coelho','artur-nogueira':'A. Nogueira','nova-odessa':'N. Odessa','monte-mor':'Monte Mor'};
 
+const CODE={campinas:'CAM',americana:'AME',sumare:'SUM',indaiatuba:'IND',valinhos:'VAL',vinhedo:'VIN',paulinia:'PAU',hortolandia:'HOR',cosmopolis:'COS',jaguariuna:'JAG',pedreira:'PED',holambra:'HOL',itatiba:'ITA',morungaba:'MOR','monte-mor':'MMO','nova-odessa':'NOV','santa-barbara-doeste':'SBO','santo-antonio-de-posse':'SAP','artur-nogueira':'ART','engenheiro-coelho':'ENG'};
 /* tilemap(el, {key, fmtv, current, href, neutral}). Sem dados comparáveis, fica neutro e mostra a população. */
 function tilemap(el, o){
   const neutral = !!o.neutral;
@@ -66,7 +67,7 @@ function tilemap(el, o){
     const q = sorted.indexOf(c[key])/(n-1), p = Math.min(4,Math.floor(q*5))/4, pp = .08 + p*.92;
     return `<a class="tile${neutral?' neutral':''}${!neutral&&pp>.62?' hot':''}${c.slug===o.current?' on':''}" style="grid-column:${c.tile[0]+1};grid-row:${c.tile[1]+1};--p:${pp.toFixed(3)}"
       href="${o.href?o.href(c):'municipio.html#'+c.slug}" title="${esc(c.nome)}: ${fmtv(c[key])}${neutral?' habitantes':''}" aria-label="${esc(c.nome)}">
-      <b>${esc(SHORT[c.slug]||c.nome)}</b><small>${fmtv(c[key])}</small></a>`;
+      <b><span class="fl">${esc(SHORT[c.slug]||c.nome)}</span><span class="cd">${CODE[c.slug]||c.nome.slice(0,3).toUpperCase()}</span></b><small>${fmtv(c[key])}</small></a>`;
   }).join('');
   return neutral;
 }

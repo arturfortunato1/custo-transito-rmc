@@ -542,3 +542,28 @@ input[type=range]::-moz-range-thumb{width:28px;height:28px}
 @media (max-width:400px){.nav .links a{padding-left:8px;padding-right:8px}.nav .wrap{gap:4px 12px}}
 .slider{min-width:0}.slider input[type=range]{max-width:100%;margin:0}.presets button{min-width:56px}
 @media (max-width:400px){.tile b{font-size:10px}.tile small{font-size:10px}.tile{overflow:hidden}}
+
+/* Recheck: codes in tiles on phone, 44px targets, inline dots, no mono digits */
+.tile .cd{display:none}
+.kpis b,.kpis .n{font-variant-numeric:normal}
+.fig .k .src[data-d]{margin-left:6px}
+@media (max-width:700px){
+  .tile .fl{display:none}.tile .cd{display:inline}
+  .tile b,.tile small{font-size:12px!important}
+  .miniwrap{display:none}
+  .nav .links a,.brand{min-height:44px;display:inline-flex;align-items:center}
+  .step{grid-template-columns:44px minmax(0,1fr) 44px}
+  .step button{height:44px;min-width:44px}
+  .step input{padding:12px 0}
+  .chip,.dx-btn,.vsel,select,.btn,.presets button,.seg button,summary{min-height:44px}
+  .rm{width:44px;height:44px}
+  .cr .vsel{padding:8px 10px}
+  input[type=checkbox]{width:24px;height:24px}
+  #footer a,footer.site nav a{display:inline-flex;align-items:center;min-height:44px;padding:0 4px}
+  .rank a.rk{min-height:48px}
+  .doors4{grid-template-columns:minmax(0,1fr)!important;gap:8px}
+  .door{min-height:56px!important;padding:12px 20px!important;display:flex!important;flex-direction:row;align-items:center;justify-content:space-between;gap:12px}
+  .door .h3{font-size:16px}
+  .door .go{margin:0}
+  .door .go::after{content:" →"}
+}
