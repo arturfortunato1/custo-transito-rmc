@@ -567,3 +567,16 @@ input[type=range]::-moz-range-thumb{width:28px;height:28px}
   .door .go{margin:0}
   .door .go::after{content:" →"}
 }
+
+/* Abertura em movimento e faixas de fundo */
+.dark{--bg:#0a0b0e;--bg-2:#15171b;--bg-3:#1d2026;--line:#262a31;--ink:#f3f4f6;--ink-2:#c5c9d1;--muted:#a3a9b5;--sus:#5a8ef2;--sign:#f5c518;--death:#ff6a5c;--heat:#ff7444;--save:#3dbd84;--on-sus:#06122b;background:var(--bg);color:var(--ink)}
+.hero.dark{position:relative;overflow:hidden;isolation:isolate;padding-top:72px}
+.hero.dark canvas.fx{position:absolute;inset:0;width:100%;height:100%;z-index:-1;display:block}
+.hero.dark .wrap>*{animation:rise .9s cubic-bezier(.2,.7,.1,1) both}
+.hero.dark .wrap>*:nth-child(1){animation-delay:.1s}.hero.dark .wrap>*:nth-child(2){animation-delay:.5s}
+.hero.dark .wrap>*:nth-child(n+3){animation-delay:1.2s}
+@keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.hero.dark .wrap>*{animation:none}}
+.hero.dark .mark-gap{color:#16130a}
+.band{background:var(--bg-2)}
+.sec.dark{background:var(--bg)}

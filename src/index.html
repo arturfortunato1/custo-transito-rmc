@@ -9,7 +9,7 @@
 <div id="nav"></div>
 
 <main>
-  <section class="hero"><div class="wrap">
+  <section class="hero dark"><canvas class="fx" aria-hidden="true"></canvas><div class="wrap">
     <p class="eyebrow">Frente Nacional de Prefeitas e Prefeitos · RMC, <span id="ano"></span></p>
     <h1 class="display" style="margin-top:18px;max-width:20ch">Para cada R$&nbsp;1 que o SUS pagou, a conta real foi de ao menos <span class="mark-gap"><b class="n" id="hX">R$&nbsp;27</b></span>.</h1>
     <div style="margin-top:32px" id="heroUnits"></div>
@@ -22,7 +22,7 @@
     <div class="actions" style="margin-top:28px"><a class="btn" href="municipio.html#campinas">Calcule a sua cidade</a><a class="btn ghost" href="metodo.html#estimativa">Como calculamos</a></div>
   </div></section>
 
-  <section class="sec"><div class="wrap">
+  <section class="sec band"><div class="wrap">
     <div class="sec-head" style="margin-bottom:28px">
       <h2 class="h2">A moto lidera.</h2>
     </div>
@@ -30,7 +30,7 @@
     <p class="quote" id="quote" style="margin-top:32px"></p>
   </div></section>
 
-  <section class="sec" id="prevencao"><div class="wrap">
+  <section class="sec dark" id="prevencao"><div class="wrap">
     <div class="sec-head" style="margin-bottom:28px">
       <h2 class="h2">Salvar vidas também salva recursos.</h2>
     </div>
@@ -51,7 +51,7 @@
     </div>
   </div></section>
 
-  <section class="sec"><div class="wrap">
+  <section class="sec band"><div class="wrap">
     <div class="doors doors4">
       <a class="door" href="sua-cidade.html"><h3 class="h3">Calcule a sua cidade</h3><span class="go">Começar</span></a>
       <a class="door" href="municipio.html#campinas"><h3 class="h3">Ficha da cidade</h3><span class="go">Abrir</span></a>
@@ -68,6 +68,7 @@
 <script src="assets/data.js"></script>
 <script src="assets/model.js"></script>
 <script src="assets/ui.js"></script>
+<script src="assets/hero-fx.js"></script>
 <script>
 (function(){
 const D=RMC, R=M.regiao, F=M.fmt, esc=UI.esc;
