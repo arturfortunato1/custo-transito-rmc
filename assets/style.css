@@ -604,3 +604,13 @@ html.intro-open main>.hero .wrap>*:nth-child(2){animation-delay:.15s}
 html.intro-open main>.hero .wrap>*:nth-child(n+3){animation-delay:.3s}
 @media (prefers-reduced-motion:reduce){#intro{transition:none}}
 @media print{#intro{display:none!important}}
+
+/* Controle de prevenção: passo de 1, trilha com preenchimento e botão grande */
+.slider input[type=range]{-webkit-appearance:none;appearance:none;height:44px;background:transparent;cursor:pointer;touch-action:pan-y;--pct:30%}
+.slider input[type=range]::-webkit-slider-runnable-track{height:8px;border-radius:999px;background:linear-gradient(to right,var(--save) var(--pct),var(--line) var(--pct))}
+.slider input[type=range]::-moz-range-track{height:8px;border-radius:999px;background:var(--line)}
+.slider input[type=range]::-moz-range-progress{height:8px;border-radius:999px;background:var(--save)}
+.slider input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:28px;height:28px;margin-top:-10px;border-radius:50%;background:#fff;border:3px solid var(--save);box-shadow:0 2px 8px rgba(0,0,0,.28);transition:transform .12s}
+.slider input[type=range]::-moz-range-thumb{width:22px;height:22px;border-radius:50%;background:#fff;border:3px solid var(--save);box-shadow:0 2px 8px rgba(0,0,0,.28)}
+.slider input[type=range]:active::-webkit-slider-thumb{transform:scale(1.15)}
+.slider input[type=range]:focus-visible{outline:2px solid var(--ink);outline-offset:2px;border-radius:8px}

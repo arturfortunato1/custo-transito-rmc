@@ -108,19 +108,29 @@ function prevencao(el, t, opt){
     <div class="slider">
       <label for="${id}">Se ${esc(opt.nome||'a região')} reduzir mortes e internações em</label>
       <output for="${id}" id="${id}_o" class="n">20%</output>
-      <input type="range" id="${id}" min="5" max="60" step="5" value="${opt.pct||20}">
+      <input type="range" id="${id}" min="1" max="60" step="1" value="${opt.pct||20}">
       <div class="presets" role="group" aria-label="Reduções frequentes">${[10,20,30].map(v=>`<button type="button" data-v="${v}">${v}%</button>`).join('')}</div>
     </div>
     <div><div class="saves" id="${id}_s"></div></div>
   </div>`;
   const inp=document.getElementById(id);
+  /* Números que acompanham o controle: tween curto a cada passo, sem esperar soltar */
+  const box=document.getElementById(id+'_s');
+  box.innerHTML=`<div><b class="n" data-k="saude"></b><span>a menos por ano na saúde ${src('custo')}</span></div>
+    <div><b class="n" data-k="dias"></b><span>leitos-dia livres</span></div>`;
+  const fmts={saude:F.money, dias:v=>F.int(v)}, cur={}, tgt={}, nodes={saude:box.querySelector('[data-k=saude]'),dias:box.querySelector('[data-k=dias]')};
+  let raf=0;
+  function paint(){ raf=0; let busy=false;
+    for(const k in nodes){ const d=tgt[k]-cur[k]; if(Math.abs(d)>Math.max(.5,Math.abs(tgt[k])*.002)){ cur[k]+=d*.32; busy=true; } else cur[k]=tgt[k]; nodes[k].textContent=fmts[k](cur[k]); }
+    if(busy) raf=requestAnimationFrame(paint); }
   function upd(){
     const p=inp.value/100, e=M.economia(opt.get?opt.get():t,p);
     document.getElementById(id+'_o').textContent=inp.value+'%';
     el.querySelectorAll('.presets button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.v===inp.value));
-    document.getElementById(id+'_s').innerHTML=`
-      <div><b class="n">${F.money(e.saude)}</b><span>a menos por ano na saúde ${src('custo')}</span></div>
-      <div><b class="n">${F.int(e.leitosDia)}</b><span>leitos-dia livres</span></div>`;
+    inp.style.setProperty('--pct',((inp.value-inp.min)/(inp.max-inp.min)*100)+'%');
+    tgt.saude=e.saude; tgt.dias=e.leitosDia;
+    if(cur.saude===undefined||reduce()){ cur.saude=tgt.saude; cur.dias=tgt.dias; }
+    if(!raf) raf=requestAnimationFrame(paint);
   }
   const pres=el.querySelectorAll('.presets button');
   pres.forEach(b=>b.addEventListener('click',()=>{inp.value=b.dataset.v;upd()}));
