@@ -614,3 +614,4 @@ html.intro-open main>.hero .wrap>*:nth-child(n+3){animation-delay:.3s}
 .slider input[type=range]::-moz-range-thumb{width:22px;height:22px;border-radius:50%;background:#fff;border:3px solid var(--save);box-shadow:0 2px 8px rgba(0,0,0,.28)}
 .slider input[type=range]:active::-webkit-slider-thumb{transform:scale(1.15)}
 .slider input[type=range]:focus-visible{outline:2px solid var(--ink);outline-offset:2px;border-radius:8px}
+.saves b,.saves .n{font-variant-numeric:normal}
