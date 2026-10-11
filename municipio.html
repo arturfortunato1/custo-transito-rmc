@@ -12,7 +12,8 @@
 <meta property="og:type" content="website">
 <meta property="og:title" content="Custo do Trânsito RMC">
 <meta property="og:description" content="Para cada R$ 1 que o SUS pagou por internações de trânsito, a conta real foi de pelo menos R$ 27. Campinas e os 20 municípios da região.">
-<meta property="og:image" content="assets/fnp.png">
+<meta property="og:image" content="https://arturfortunato1.github.io/custo-transito-rmc/assets/og.png">
+<meta name="twitter:card" content="summary_large_image">
 <meta name="theme-color" content="#0d0f13">
 
 </head>
@@ -20,16 +21,17 @@
 <div id="nav"></div>
 <main>
   <section class="hero" style="padding-top:48px"><div class="wrap">
-    <div class="picker no-print">
+    <div class="cityhead" style="margin-top:8px">
+      <div>
+        <p class="eyebrow">Ficha do município · <span id="ano"></span></p>
+        <h1 class="display" id="name" style="margin-top:14px">Campinas</h1>
+    <div class="picker no-print" style="margin-top:20px">
       <label class="sr" for="city">Município</label>
       <select id="city"></select>
       <button type="button" class="btn ghost" id="printBtn">Imprimir ficha</button>
       <a class="btn ghost" href="sua-cidade.html">Digitar meus números</a>
     </div>
-    <div class="cityhead" style="margin-top:44px">
-      <div>
-        <p class="eyebrow">Ficha do município · <span id="ano"></span></p>
-        <h1 class="display" id="name" style="margin-top:14px">Campinas</h1>
+
       </div>
       <div class="no-print"><div class="tilemap mini" id="mini" aria-hidden="true"></div><p class="small" style="margin-top:8px">na região</p></div>
     </div>

@@ -20,6 +20,7 @@ function bannerText(){
 const nav = document.getElementById('nav');
 if(nav) nav.outerHTML = `<header class="nav"><div class="wrap">
   <a class="brand" href="index.html"><i aria-hidden="true"></i>Custo do Trânsito <span>RMC</span></a>
+  <a class="fnp-head" href="https://fnp.org.br" target="_blank" rel="noopener" aria-label="Frente Nacional de Prefeitas e Prefeitos"><span class="logo-plate"><img src="assets/fnp.png" alt="FNP" width="65" height="24"></span></a>
   <nav class="links" aria-label="Páginas">${PAGES.map(([h,l,id])=>`<a href="${h}"${id===(ALIAS[page]||page)?' aria-current="page"':''}>${l}</a>`).join('')}</nav>
 </div></header>
 <div class="print-only wrap"><span class="logo-plate"><img src="assets/fnp.png" alt="FNP" width="187" height="69"></span><span>Custo do Trânsito RMC · Frente Nacional de Prefeitas e Prefeitos · ${new Date().toLocaleDateString('pt-BR')}</span></div>`;
@@ -107,6 +108,7 @@ function prevencao(el, t, opt){
       <label for="${id}">Se ${esc(opt.nome||'a região')} reduzir mortes e internações em</label>
       <output for="${id}" id="${id}_o" class="n">20%</output>
       <input type="range" id="${id}" min="5" max="60" step="5" value="${opt.pct||20}">
+      <div class="presets" role="group" aria-label="Reduções frequentes">${[10,20,30].map(v=>`<button type="button" data-v="${v}">${v}%</button>`).join('')}</div>
     </div>
     <div><div class="saves" id="${id}_s"></div></div>
   </div>`;
@@ -114,10 +116,13 @@ function prevencao(el, t, opt){
   function upd(){
     const p=inp.value/100, e=M.economia(opt.get?opt.get():t,p);
     document.getElementById(id+'_o').textContent=inp.value+'%';
+    el.querySelectorAll('.presets button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.v===inp.value));
     document.getElementById(id+'_s').innerHTML=`
       <div><b class="n">${F.money(e.saude)}</b><span>a menos por ano na saúde ${src('custo')}</span></div>
       <div><b class="n">${F.int(e.leitosDia)}</b><span>leitos-dia livres</span></div>`;
   }
+  const pres=el.querySelectorAll('.presets button');
+  pres.forEach(b=>b.addEventListener('click',()=>{inp.value=b.dataset.v;upd()}));
   inp.addEventListener('input',upd); upd();
   return upd;
 }
