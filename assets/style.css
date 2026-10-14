@@ -8,7 +8,8 @@
   --sus:#1f5fd1; --sign:#f2b600; --stripe:#16130a; --death:#cf3328; --heat:#e0502a;
   --save:#1d8a5a; --c-pref:#7c8496; --c-prod:#3b4252; --c-dano:#5b6477; --c-inss:#d3d7de;
   --on-sus:#ffffff; --glass:rgba(255,255,255,.78);
-  --hatch:repeating-linear-gradient(-45deg,var(--sign) 0 7px,var(--stripe) 7px 14px);
+  /* Chevron de obstáculo (preto sobre amarelo), apontando no sentido da barra. Cada chevron tem a altura da peça. */
+  --hatch:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath d='M0 0h10l10 10-10 10H0l10-10z' fill='%2316130a'/%3E%3C/svg%3E") 0 50% / auto 100% repeat-x var(--sign);
   --display:"Schibsted Grotesk","Helvetica Neue",Arial,sans-serif;
   --text:-apple-system,BlinkMacSystemFont,"Hanken Grotesk","Segoe UI",Roboto,sans-serif;
   --mono:"Overpass Mono",ui-monospace,Menlo,Consolas,monospace;
@@ -650,7 +651,7 @@ html.intro-on .hero .units i{animation-play-state:paused}
 @media (max-width:560px){.mo [data-pin]+section{border-radius:22px 22px 0 0}}
 
 /* Fita zebrada que corre com a rolagem, no alto da seção escura */
-.ribbon{height:12px;background:var(--hatch);background-size:auto;margin-top:calc(var(--sp) * -1);margin-bottom:calc(var(--sp) - 12px)}
+.ribbon{height:14px;background:var(--hatch);margin-top:calc(var(--sp) * -1);margin-bottom:calc(var(--sp) - 14px)}
 .dark>.ribbon{border-radius:inherit}
 .mo [data-depth]{will-change:translate}
 @media print{.mo [data-r],.mo [data-r]>*,.mo [data-r] .tile{translate:none!important;scale:none!important;opacity:1!important}.mo [data-pin]{position:static}.ribbon{display:none}}
