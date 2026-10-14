@@ -76,6 +76,8 @@ const D=RMC, R=M.regiao, F=M.fmt, esc=UI.esc;
 document.getElementById('ano').textContent=D.ano;
 document.getElementById('hX').textContent='R$\u00a0'+Math.round(R.real/R.pago);
 document.getElementById('heroUnits').innerHTML=UI.unitchart(R.pago,R.real);
+/* Gráfico e legenda com a largura exata da fileira (quadrados de 22 px + 5 px de espaço), sem coluna vazia no fim */
+const nU=document.querySelectorAll('#heroUnits .units i').length; document.querySelector('.hero .wrap').style.setProperty('--uw',Math.min(760,nU*27-5)+'px');
 document.getElementById('hTab').textContent=F.money(R.pago);
 document.getElementById('hGap').textContent=F.money(R.gap);
 const propria=R.despPropria/R.despSaude;
