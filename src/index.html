@@ -8,9 +8,10 @@
 </head>
 <body data-page="inicio">
 <div id="nav"></div>
+<nav class="secnav" aria-label="Nesta página"><a href="#conta">A conta</a><a href="#moto">A moto</a><a href="#prevencao">Prevenção</a><a href="#mapa">Mapa</a><a href="#explorar">Explorar</a></nav>
 
 <main>
-  <section class="hero"><div class="wrap">
+  <section class="hero" id="conta" data-pin><div class="wrap">
     <p class="eyebrow">Frente Nacional de Prefeitas e Prefeitos · RMC, <span id="ano"></span></p>
     <h1 class="display" style="margin-top:18px;max-width:20ch">Para cada R$&nbsp;1 que o SUS pagou, a conta real foi de ao menos <span class="mark-gap"><b class="n" id="hX">R$&nbsp;27</b></span>.</h1>
     <div style="margin-top:32px" id="heroUnits"></div>
@@ -23,7 +24,7 @@
     <div class="actions" style="margin-top:28px"><a class="btn" href="municipio.html#campinas">Calcule a sua cidade</a><a class="btn ghost" href="metodo.html#estimativa">Como calculamos</a></div>
   </div></section>
 
-  <section class="sec band"><div class="wrap">
+  <section class="sec band" id="moto" data-pin><div class="wrap">
     <div class="sec-head" style="margin-bottom:28px">
       <h2 class="h2">A moto lidera.</h2>
     </div>
@@ -31,7 +32,7 @@
     <p class="quote" id="quote" style="margin-top:32px"></p>
   </div></section>
 
-  <section class="sec dark" id="prevencao"><div class="wrap">
+  <section class="sec dark has-bgv" id="prevencao"><video class="bgv" muted playsinline loop preload="none" poster="assets/rua.jpg" aria-hidden="true" tabindex="-1"><source src="assets/rua.mp4" type="video/mp4"><source src="assets/rua.webm" type="video/webm"></video><div class="ribbon" aria-hidden="true"></div><div class="wrap">
     <div class="sec-head" style="margin-bottom:28px">
       <h2 class="h2">Salvar vidas também salva recursos.</h2>
     </div>
@@ -39,20 +40,20 @@
     <p class="h3" style="font-size:20px;margin-top:28px" id="ex"></p>
   </div></section>
 
-  <section class="sec"><div class="wrap">
+  <section class="sec" id="mapa"><div class="wrap">
     <div class="map-grid">
       <div>
         <div class="sec-head" style="margin-bottom:28px">
           <h2 class="h2">Internações por habitante.</h2>
         </div>
-        <div class="tilemap" id="map" aria-label="Mapa esquemático dos 20 municípios"></div>
+        <div class="tilemap" id="map" data-depth=".08" aria-label="Mapa esquemático dos 20 municípios"></div>
         <div class="scale" id="scale"><span>Menos</span><i aria-hidden="true"></i><span>Mais</span></div>
       </div>
-      <div style="padding-top:8px" id="mapSide"></div>
+      <div style="padding-top:8px" id="mapSide" data-depth="-.06"></div>
     </div>
   </div></section>
 
-  <section class="sec"><div class="wrap">
+  <section class="sec" id="explorar"><div class="wrap">
     <div class="doors doors4">
       <a class="door" href="sua-cidade.html"><h3 class="h3">Calcule a sua cidade</h3><span class="go">Começar</span></a>
       <a class="door" href="municipio.html#campinas"><h3 class="h3">Ficha da cidade</h3><span class="go">Abrir</span></a>
@@ -87,7 +88,10 @@ const cps=M.bySlug.campinas, f=D.fatos.campinasReducao, e=M.economia(cps,f.pct);
 document.getElementById('ex').innerHTML=`Campinas cortou ${F.pct(f.pct)} das mortes em 2026. Igual queda nas internações pouparia ${F.money(e.saude)} e ${F.int(e.leitosDia)} leitos-dia por ano. <a class="small" href="${f.url}" target="_blank" rel="noopener">Fonte</a>`;
 UI.tilemap(document.getElementById('map'),{key:'internPor100k',fmtv:v=>F.int(v)});
 const top=M.rank('internPor100k').slice(0,5);
-document.getElementById('mapSide').innerHTML=`<ol class="rank">`+top.map((c,i)=>`<li><a class="rk c3" href="municipio.html#${c.slug}">
+document.getElementById('mapSide').innerHTML=`<ol class="rail" aria-label="As 5 cidades com mais internações por habitante">`+top.map((c,i)=>`<li><a class="card" href="municipio.html#${c.slug}">
+  <span class="pos n">${i+1}º</span><b class="nm">${esc(c.nome)}</b>
+  <span class="big n">${F.int(c.internPor100k)}</span><span class="k">internações por 100 mil habitantes</span>
+  ${UI.gapbar(c.tab,c.real,'sm')}<span class="k"><b class="mark-sus n">${F.money(c.tab)}</b> pagos · <b class="n">${F.money(c.real)}</b> estimado</span></a></li>`).join('')+`</ol><ol class="rank">`+top.map((c,i)=>`<li><a class="rk c3" href="municipio.html#${c.slug}">
   <span class="i n">${i+1}</span><span class="nm"><b>${esc(c.nome)}</b></span>
   <span class="v n">${F.int(c.internPor100k)}</span></a></li>`).join('')+`</ol><div class="actions" style="margin-top:20px"><a class="btn" href="municipios.html">Ver os 20 municípios</a></div>`;
 })();
