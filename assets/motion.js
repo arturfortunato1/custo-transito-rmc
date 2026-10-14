@@ -25,6 +25,8 @@ function docTop(el){
 const secnav = document.querySelector('.secnav');
 const marks = secnav ? [...secnav.querySelectorAll('a[href^="#"]')].map(a=>({a, s:document.getElementById(a.hash.slice(1))})).filter(x=>x.s) : [];
 function navFrame(){
+  /* barra do topo escura enquanto está sobre a abertura com foto */
+  const hn=document.querySelector('.hero.noite'); if(hn) de.classList.toggle('sobre-noite', Math.min(hn.getBoundingClientRect().bottom, hn.nextElementSibling ? hn.nextElementSibling.getBoundingClientRect().top : 1e9) > (navH||57)*Z + 2);
   if(!marks.length) return;
   const y = scrollY, line = y + vh*.45;
   let cur = marks[0];

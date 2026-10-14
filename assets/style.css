@@ -742,7 +742,23 @@ html.intro-on .hero .units i{animation-play-state:paused}
 /* Telas baixas (celular deitado com zoom, janelas curtas): a barra do site rola junto para não ocupar metade da tela */
 @media (max-height:520px){.nav{position:relative}}
 /* Monitores grandes: o site cresce junto, em vez de virar uma coluna estreita no meio */
-@media (min-width:1800px){html{zoom:1.2}}
-@media (min-width:2300px){html{zoom:1.45}}
-@media (min-width:3000px){html{zoom:1.9}}
+@media (min-width:1800px){html{zoom:1.2;--zf:1.2}}
+@media (min-width:2300px){html{zoom:1.45;--zf:1.45}}
+@media (min-width:3000px){html{zoom:1.9;--zf:1.9}}
 @media print{html{zoom:1}}
+
+/* Abertura sobre a rua à noite (14 out.) */
+.hero.noite{isolation:isolate;overflow:hidden;padding-top:calc(var(--sp)*.9);padding-bottom:calc(var(--sp)*.8);background:#07080a;min-height:calc(100svh / var(--zf,1) - var(--navh,57px));display:flex;flex-direction:column;justify-content:center}
+.hero.noite>.wrap{width:100%}
+.mo .hero.noite{position:sticky}
+.hero.noite::before{content:"";position:absolute;inset:-2%;z-index:-2;background:url(noite.jpg) 70% 60%/cover no-repeat;filter:blur(1.5px) brightness(.85) saturate(.9)}
+.hero.noite::after{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(90deg,rgba(7,8,10,.9) 0%,rgba(7,8,10,.62) 48%,rgba(7,8,10,.25) 100%),linear-gradient(180deg,rgba(7,8,10,.35) 0%,rgba(7,8,10,0) 30%,rgba(7,8,10,0) 70%,rgba(7,8,10,.8) 100%)}
+.hero.noite .hero-card{background:rgba(18,20,24,.5);-webkit-backdrop-filter:blur(20px) saturate(1.3);backdrop-filter:blur(20px) saturate(1.3);border:1px solid rgba(255,255,255,.12);box-shadow:0 30px 80px -30px rgba(0,0,0,.8)}
+.hero.noite .eyebrow{color:#d0d4db}
+.hero.noite .btn.ghost{color:#f5c518}
+html.sobre-noite .nav{--glass:rgba(7,8,10,.94);--line:rgba(255,255,255,.08);--ink:#f3f4f6;--ink-2:#c5c9d1;--muted:#a3a9b5;--bg:#0a0b0e;--bg-2:#15171b;color:var(--ink)}
+html.sobre-noite .nav .links a[aria-current],html.sobre-noite .nav .links a.on{background:#f3f4f6;color:#0a0b0e}
+@media (max-width:999px){
+  .hero.noite::before{background-image:url(noite-retrato.jpg);background-position:60% 75%}
+  .hero.noite::after{background:linear-gradient(180deg,rgba(7,8,10,.8) 0%,rgba(7,8,10,.45) 35%,rgba(7,8,10,.55) 65%,rgba(7,8,10,.9) 100%)}
+}
