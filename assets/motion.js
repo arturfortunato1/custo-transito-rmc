@@ -12,12 +12,12 @@ if(!main) return;
 const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const hasIO = 'IntersectionObserver' in window;
 const nav = document.querySelector('.nav');
-let navH = 0, vh = innerHeight, raf = 0;
+let navH = 0, vh = innerHeight, raf = 0, Z = 1;  /* Z: zoom do CSS em monitores grandes (rects e scrollY vêm já multiplicados; offsetHeight não) */
 
 /* Posição de uma seção no documento, ignorando o deslocamento de quem está fixada (sticky):
    uma seção fixada termina onde começa a seguinte. */
 function docTop(el){
-  if(el.matches('[data-pin]') && el.nextElementSibling) return docTop(el.nextElementSibling) - el.offsetHeight;
+  if(el.matches('[data-pin]') && el.nextElementSibling) return docTop(el.nextElementSibling) - el.offsetHeight*Z;
   return el.getBoundingClientRect().top + scrollY;
 }
 
@@ -31,7 +31,7 @@ function navFrame(){
   marks.forEach(m=>{ if(docTop(m.s) <= line) cur = m; });
   marks.forEach(m=>{ const on = m===cur; m.a.classList.toggle('cur',on); on?m.a.setAttribute('aria-current','true'):m.a.removeAttribute('aria-current'); });
   const foot = document.querySelector('footer.site');
-  const past = y > marks[0].s.offsetHeight*.6, atFoot = foot && foot.getBoundingClientRect().top < vh*.9;
+  const past = y > marks[0].s.offsetHeight*Z*.6, atFoot = foot && foot.getBoundingClientRect().top < vh*.9;
   secnav.classList.toggle('on', past && !atFoot);
   if(cur.a !== secnav._cur){ secnav._cur = cur.a;
     const a = cur.a; secnav.scrollTo({left: a.offsetLeft - (secnav.clientWidth - a.offsetWidth)/2, behavior: reduced?'auto':'smooth'}); }
@@ -39,7 +39,7 @@ function navFrame(){
 if(secnav) secnav.addEventListener('click', e=>{
   const m = marks.find(x=>x.a===e.target.closest('a')); if(!m) return;
   e.preventDefault();
-  const i = marks.indexOf(m), top = i===0 ? 0 : Math.max(0, docTop(m.s) - navH);
+  const i = marks.indexOf(m), top = i===0 ? 0 : Math.max(0, docTop(m.s) - navH*Z);
   scrollTo({top, behavior: reduced ? 'auto' : 'smooth'});
   history.replaceState(null,'',m.a.hash);
 });
@@ -55,7 +55,8 @@ if(!reduced && !conn.saveData && hasIO) vids.forEach(v=>{
   },{threshold:.05}).observe(v);
 });
 
-function measureNav(){ vh = innerHeight; navH = nav ? nav.offsetHeight : 0; de.style.setProperty('--navh', navH+'px'); }
+function measureNav(){ vh = innerHeight; Z = nav && nav.offsetHeight ? (nav.getBoundingClientRect().height / nav.offsetHeight) || 1 : 1;
+  navH = nav && getComputedStyle(nav).position==='sticky' ? nav.offsetHeight : 0; de.style.setProperty('--navh', navH+'px'); }
 
 if(reduced || !hasIO){
   const t = ()=>{ if(!raf) raf = requestAnimationFrame(()=>{ raf=0; navFrame(); }); };
@@ -135,7 +136,7 @@ const deep = [...document.querySelectorAll('[data-depth]')];
 const ribbons = [...document.querySelectorAll('.ribbon')];
 function measure(){
   measureNav();
-  pins.forEach(p=>{ p.style.setProperty('--pin', Math.min(navH, vh - p.offsetHeight)+'px'); });
+  pins.forEach(p=>{ p.style.setProperty('--pin', Math.min(navH, vh/Z - p.offsetHeight)+'px'); });
   frame();
 }
 function frame(){
@@ -143,9 +144,9 @@ function frame(){
   const y = scrollY;
   pins.forEach(p=>{
     const next = p.nextElementSibling; if(!next) return;
-    const nt = next.getBoundingClientRect().top;
-    /* 0 quando a próxima seção ainda está abaixo da tela, 1 quando já cobriu a fixada */
-    const k = Math.max(0, Math.min(1, (vh - nt) / Math.max(1, vh - navH)));
+    const nt = next.getBoundingClientRect().top, pb = Math.min(vh, p.getBoundingClientRect().bottom);
+    /* 0 enquanto a próxima seção ainda não passou da borda de baixo da fixada, 1 quando já a cobriu */
+    const k = Math.max(0, Math.min(1, (pb - nt) / Math.max(1, pb - navH*Z)));
     p.style.setProperty('--k', k.toFixed(3));
   });
   deep.forEach(el=>{

@@ -695,5 +695,54 @@ html.intro-on .hero .units i{animation-play-state:paused}
   .rail .gapbar{margin-top:10px}
 }
 
-/* Na abertura a legenda acompanha a largura do gráfico de unidades, para "Estimado" ficar sob o fim da fileira */
-.hero .units,.hero .gap-legend{max-width:var(--uw,760px)}
+/* Abertura: o texto à esquerda e a conta num painel à direita (em telas largas); no celular o painel vem logo após o título */
+.hero-card{margin:32px 0 0;padding:24px;border-radius:28px;background:var(--bg-2);display:grid;gap:20px}
+.hero-card .units{max-width:none}
+.hero-card .units-cap{margin-top:14px}
+.hero-card .gap-legend{margin-top:0;padding-top:18px;border-top:1px solid var(--line);grid-template-columns:auto 1fr auto}
+@media (max-width:560px){.hero-card{padding:18px;border-radius:22px;margin-inline:-4px}}
+@media (min-width:1000px){
+  .hero .wrap{display:grid;grid-template-columns:minmax(0,1.12fr) minmax(0,.88fr);grid-template-areas:"eye card" "h1 card" "kpi card" "act card";column-gap:clamp(40px,5vw,80px);align-items:start;align-content:center}
+  .hero .eyebrow{grid-area:eye}
+  .hero .display{grid-area:h1}
+  .hero .kpis{grid-area:kpi}
+  .hero .actions{grid-area:act}
+  .hero-card{grid-area:card;align-self:center;margin:0;padding:32px}
+  .hero-card .units{grid-template-columns:repeat(9,minmax(0,1fr));gap:8px}
+  .hero-card .units i{border-radius:8px}
+  .hero .kpis{display:grid;grid-template-columns:repeat(2,max-content);gap:10px 32px}
+}
+
+/* Revisão em muitas telas (14 out.) */
+/* Telas pequenas: as quatro páginas cabem na barra a partir de 320 px, e a marca não empurra o logo da FNP para outra linha */
+@media (max-width:374px){
+  .brand{font-size:15px;gap:8px}.brand i{width:20px;height:20px}
+  .nav .wrap{column-gap:10px}
+  .nav .links{gap:2px}
+  .nav .links{justify-content:space-between}
+  .nav .links a{font-size:12.5px;padding-left:5px;padding-right:5px;letter-spacing:-.01em}
+}
+/* Quem paga: a cor de cada grupo não encolhe, nomes longos quebram com hífen e o "+" nunca sai da tela */
+.grp-top{min-width:0}
+.grp-top i{flex:0 0 auto}
+.grp-top span{min-width:0;-webkit-hyphens:auto;hyphens:auto;overflow-wrap:anywhere}
+.grp-tot{white-space:nowrap}
+.grp summary::after{flex:0 0 auto}
+@media (max-width:374px){.grp summary{gap:10px}.grp-tot{font-size:18px}.grp-top span{font-size:15px}}
+.door .go{white-space:nowrap}
+.gap-legend .k{white-space:nowrap}
+/* Toque (celular deitado, tablets): alvos de 44 px também acima de 700 px de largura */
+@media (pointer:coarse){
+  .nav .links a,.secnav a,.seg button,.presets button,.btn,.chip,.dx-btn,select,summary{min-height:44px}
+  .nav .links a,.secnav a{display:inline-flex;align-items:center}
+  .step button{min-height:44px;min-width:44px}
+  footer.site nav a,.prevnext a{display:inline-flex;align-items:center;min-height:44px}
+  input[type=checkbox]{width:24px;height:24px}
+}
+/* Telas baixas (celular deitado com zoom, janelas curtas): a barra do site rola junto para não ocupar metade da tela */
+@media (max-height:520px){.nav{position:relative}}
+/* Monitores grandes: o site cresce junto, em vez de virar uma coluna estreita no meio */
+@media (min-width:1800px){html{zoom:1.2}}
+@media (min-width:2300px){html{zoom:1.45}}
+@media (min-width:3000px){html{zoom:1.9}}
+@media print{html{zoom:1}}

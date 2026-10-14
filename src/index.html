@@ -14,12 +14,14 @@
   <section class="hero" id="conta" data-pin><div class="wrap">
     <p class="eyebrow">Frente Nacional de Prefeitas e Prefeitos · RMC, <span id="ano"></span></p>
     <h1 class="display" style="margin-top:18px;max-width:20ch">Para cada R$&nbsp;1 que o SUS pagou, a conta real foi de ao menos <span class="mark-gap"><b class="n" id="hX">R$&nbsp;27</b></span>.</h1>
-    <div style="margin-top:32px" id="heroUnits"></div>
-    <div class="gap-legend" style="margin-top:28px">
+    <figure class="hero-card" aria-label="A conta de 2025 na região">
+    <div id="heroUnits"></div>
+    <div class="gap-legend">
       <div class="s"><span class="k"><i class="key" style="--c:var(--sus)"></i>Tabela SUS <span class="src ok">SIH/SUS 2025, valor oficial</span></span><span class="v n" id="hTab"></span></div>
       <div></div>
       <div class="r"><span class="k"><i class="key h"></i>Estimado <span class="src est">IPEA/ANTP corrigido pelo IPCA, margem de ±50%</span></span><span class="v n" id="hGap"></span></div>
     </div>
+    </figure>
     <p class="kpis" id="kpis"></p>
     <div class="actions" style="margin-top:28px"><a class="btn" href="municipio.html#campinas">Calcule a sua cidade</a><a class="btn ghost" href="metodo.html#estimativa">Como calculamos</a></div>
   </div></section>
@@ -76,8 +78,6 @@ const D=RMC, R=M.regiao, F=M.fmt, esc=UI.esc;
 document.getElementById('ano').textContent=D.ano;
 document.getElementById('hX').textContent='R$\u00a0'+Math.round(R.real/R.pago);
 document.getElementById('heroUnits').innerHTML=UI.unitchart(R.pago,R.real);
-/* Gráfico e legenda com a largura exata da fileira (quadrados de 22 px + 5 px de espaço), sem coluna vazia no fim */
-const nU=document.querySelectorAll('#heroUnits .units i').length; document.querySelector('.hero .wrap').style.setProperty('--uw',Math.min(760,nU*27-5)+'px');
 document.getElementById('hTab').textContent=F.money(R.pago);
 document.getElementById('hGap').textContent=F.money(R.gap);
 const propria=R.despPropria/R.despSaude;
